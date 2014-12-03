@@ -1,1 +1,61 @@
-Gjallarhorn.
+= Gjallarhorn. =
+
+== Allgemein ==
+Gjallarhon (altnordisch "laut tönendes Horn") ist eine in Go geschriebene
+Software, die zur Verwaltung einer musikalischen Notensammlung dient. In erster
+Linie soll dieses Projekt nicht nur den einfachen Verwaltungsrahmen abdecken,
+den man sicher ohne weiteres in z.B. Excel abbilden könnte, vielmehr soll versucht
+werden das komplette Orchester digital abzubilden.
+
+
+== Erfassung ==
+
+Dabei wird das einzelne Lied eines Komponisten im digitalen Format eingescannt
+und im Anschluss mit entsprechenden Metadaten in einer Datenbank abgelegt. Dabei
+werden gleichzeitig die Noten des Notenblattes digital erkannt und die einfache
+Stimme in ein digitales OpenMusicXML umgewandelt, dadurch steht später die
+Möglichkeit offen, aus jeder Stimme eine Audio-Datei zu generieren.
+
+== Verwaltung == 
+Desweiteren soll die Datenbank dem Dirigenten die Möglichkeit bieten ein
+Repertoire zusammenzustellen und diese chronologisch zu bewahren. Zudem soll er
+in der Lage sein für einzelne Auftritte angepasste Listen erstellen zu können,
+um auf entsprechende Umstände vorbereitet zu sein (Kirmes, Prozession o.ä).
+
+Da der Vorgang des Erfassens im Idealfall automatisch abläuft, soll man eben-
+falls in der Lage die Qualität der Notenblätter zu bewerten und zu bearbeiten,
+denn es kann häufig vorkommen, dass eingescannte Noten älter als das Internet
+sind. Dafür soll eine Möglichkeit geboten werden, diese mangelhaften Noten ent-
+eder zu löschen oder nachträglich zu bearbeiten.
+
+== Verteilung ==
+Das System ist zudem in er Lage die Daten auf Clienten zu übertragen. Dabei soll
+es keine Rolle spielen, ob es entfernte Desktop-PCs sind oder Smartphones. Das
+System bietet jedem Musiker die Möglichkeit die Notendatenbank zu durchstöbern
+und Noten anzusehen.
+
+== Auftritt-Modus ==
+Der Auftritt-Modus sieht vor, dass alle Musiker statt der Notenmappe ein Tablet
+verwenden. Die Dirigent nutzt ebenfalls ein Tablett und dient dabei als
+quasi-Server. sowohl server als auch Client haben eine App, die regelt welches
+Lied momentan aufliegt. Der Dirigent dient dabei als Server und die Musiker als
+Clients. Die Technik dahinter würde auf normalem WLAN basieren.
+
+
+....
+
+== Key Features == 
+    * automatisches Einsortieren der eingescannten Noten anhand $Parameter.
+    - Sotierung der Noten anhand eindeutiger Muster (Komponist, Name, Genre,
+      $Lagerort o.ä)
+    - Erstellung individueller Liederlisten für Auftritte, ständige Notenmappe,
+      Ständchen o.ä.
+    - Bewertung eingescannter PDFDateien und deren OCR-Pendants zur Verbesserung
+      derr
+    - Bewahrung des musikalischen Erbes.
+    - (sobald Copyrightechnisch geklört (was halt auch Schmarrn ist imho)) Aus-
+      tausch des Liedguts unterhalbt der Musikvereine.
+    - Direkter Zugriff auf die Notendatenbank durch eine Android-App
+    - Zwischenserver, der für Auftritte PDF-Dateien vorhält und verteilt.
+    - Der Dirigent entscheidet dabei welches Lied gespielt wird und "verteilt"
+      das Lied auf alle Tablets der Musiker.

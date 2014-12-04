@@ -59,3 +59,36 @@ Clients. Die Technik dahinter würde auf normalem WLAN basieren.
     - Zwischenserver, der für Auftritte PDF-Dateien vorhält und verteilt.
     - Der Dirigent entscheidet dabei welches Lied gespielt wird und "verteilt"
       das Lied auf alle Tablets der Musiker.
+
+
+== Definitionen ==
+Um Unklarheiten aus dem Weg zu gehen folgen einige Definitionen, die im Projekt
+weiterhin verwendet werden.
+
+=== Noten ====
+=== Stück ====
+=== Lied ===
+=== Instrument ===
+=== Stimme ===
+=== Repertoire ===
+=== Sammlung ===
+=== Auswahl ====
+
+
+
+== Notenlagerung ===
+
+Die ''Notenlagerung'' (passendes Wort finden) beschreibt nur den physischen
+Aufentahltsort der Noten. Das Lagerungsystem ansich kann aber unterteilt werden
+in folgendem System:
+    - Lagerort (räumlicher Ort), zb Strasse + Hausnummer
+    - Lagertyp (Schrank, Regal o.ä)
+    - Schublade
+    - Reihe in Schublade
+
+Man sollte beachten, dass die Deklaration der Notenlagerung _nicht_ global
+definieren kann, vielmehr sollte man pro Lagerort ein eindeutiges System ver-
+wenden, mit dem man später Noten eindeutig finden kann.
+
+
+

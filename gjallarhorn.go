@@ -14,5 +14,5 @@ func main() {
 	port := ":2650"
 
 	http.HandleFunc("/static/", statichandler)
-	http.ListenAndServe(":8080", nil)
+	http.ListenAndServe(port, nil)
 }

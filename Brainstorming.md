@@ -103,3 +103,19 @@ Als Datenbank couchdb
 
 Storageverwaltung:
 lagerort 1 : n schränke 1:n schubladen 1:n sätzen 
+
+
+
+
+
+//// Random foo
+- Eigenschaften der Titel: 
+    - Seitenverhältnis (Ich habe es jetzt öfters gesehen, dass es keine standard
+    A4, A3 oder A5 Blätter waren, sondern exotische xy Formate
+    - Fremdschlüssel mit Notiz welche anderen Titel auf dem selben Notenblatt 
+    vorhanden sind, sei es auf der Rückseite oder auf der untern Hälfte auf dem
+    selben Blatt (evtl slice)
+
+- evtl ein kleines Wiki um verschiedene Sachen zu notieren, die für einen Noten-
+wart wichtig sind. ZB. Seitenverhältnisse von A5->A4 und umgekehrt, um Kopien
+auf andere Formate zu kopieren.

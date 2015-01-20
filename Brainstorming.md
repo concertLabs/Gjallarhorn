@@ -119,3 +119,14 @@ lagerort 1 : n schränke 1:n schubladen 1:n sätzen
 - evtl ein kleines Wiki um verschiedene Sachen zu notieren, die für einen Noten-
 wart wichtig sind. ZB. Seitenverhältnisse von A5->A4 und umgekehrt, um Kopien
 auf andere Formate zu kopieren.
+
+- evtl noch eine Eigenschaft über den Status der Notenmappe eines Titels. Wir
+haben zb Hängemappen, die teilweise sehr stark abgenutzt sind. Bzw. eine all-
+gemeine Beschreibung des Zustandes der Mappe, Noten, Kopien um bei Gelegenheit
+Sachen zu erneuern.
+
+- Status über den Bestand der Kopien der Noten: Ist der Titel nur in Original-
+form vorhanden, oder liegt er auch in einer kompletten/unvollständigen Kopie
+in der Mappe vor?!
+
+

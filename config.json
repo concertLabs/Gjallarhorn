@@ -1,0 +1,4 @@
+{
+	"HttpRoot": "./web/html",
+	"ImportDirectory": "./data"
+}

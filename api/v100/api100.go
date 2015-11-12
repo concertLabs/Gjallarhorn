@@ -1,9 +1,13 @@
-package v100
+package api100
 
 import (
+	"io"
+	"log"
 	"net/http"
 
 	"github.com/gorilla/mux"
+	"github.com/quiteawful/Gjallarhorn/db/v100"
+	"github.com/quiteawful/Gjallarhorn/noten"
 )
 
 func GetSubrouter(prefix string) *mux.Router {
@@ -40,7 +44,17 @@ func getLiedHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func postLiedHandler(w http.ResponseWriter, r *http.Request) {
+	var l noten.Lied
+	l.Titel = r.Header.Get("Titel")
+	l.Komponist = r.Header.Get("Komponist")
+	l.Genre = r.Header.Get("Genre")
+	l.Verlag = r.Header.Get("Verlag")
 
+	rev, err := db100.DB.Save(l, l.Titel+l.Komponist, "")
+	if err != nil {
+		log.Fatal(err)
+	}
+	io.WriteString(w, rev)
 }
 
 func addStimmetoLiedHandler(w http.ResponseWriter, r *http.Request) {

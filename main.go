@@ -16,6 +16,6 @@ func main() {
 	Importer = importer.NewImporter(c.ImportDirectory)
 	WebApp = web.NewWebApp(c.HttpRoot)
 
-	go Importer.Run()
+	//go Importer.Run()
 	WebApp.Run()
 }

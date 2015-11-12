@@ -1,8 +1,11 @@
 package noten
 
 type Lied struct {
-	titel   string
-	stimmen []Stimme
+	Titel     string
+	Komponist string
+	Genre     string
+	Verlag    string
+	Stimmen   []Stimme
 }
 
 func (l *Lied) Save() {

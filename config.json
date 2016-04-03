@@ -1,4 +1,13 @@
 {
-	"HttpRoot": "./web/html",
-	"ImportDirectory": "./data"
+	"Httpd": {
+		"InternalMode": true,
+		"RootDir": "data/web/html"
+	},
+	"Importer": {
+		"ScanDir": "data/import",
+		"UseImporter": true
+	},
+	"Api": {
+		"Port": 3000
+	}
 }

@@ -19,10 +19,10 @@ func GetSubrouter(prefix string) *mux.Router {
 	//Stimme
 	r.HandleFunc("/lied/{name}", postStimmeHandler).Methods("POST")
 	r.HandleFunc("/lied/{liedname}/{stimmenname}", getStimmeHandler).Methods("GET")
-	//Repertoir
-	r.HandleFunc("/repertoir", postRepertoireHandler).Methods("POST")
-	r.HandleFunc("/repertoir/{name}", getRepertoireHandler).Methods("GET")
-	r.HandleFunc("/repertoir/{name}/addLied", addLiedtoRepertoirHandler).Methods("POST")
+	//Repertoire
+	r.HandleFunc("/repertoire", postRepertoireHandler).Methods("POST")
+	r.HandleFunc("/repertoire/{name}", getRepertoireHandler).Methods("GET")
+	r.HandleFunc("/repertoire/{name}/addLied", addLiedtoRepertoirHandler).Methods("POST")
 	//Schublade
 	r.HandleFunc("/schublade", postSchubladeHandler).Methods("POST")
 	r.HandleFunc("/schublade/{name}", getSchubladeHandler).Methods("GET")

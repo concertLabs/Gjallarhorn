@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"log"
 
 	"github.com/quiteawful/Gjallarhorn/importer"
 	"github.com/quiteawful/Gjallarhorn/web"
@@ -12,7 +13,7 @@ func main() {
 	flag.Parse()
 	c, err := loadConfig(*configfile)
 	if err != nil {
-		panic(err)
+		log.Fatalf("could not load configfile: %v\n", err)
 	}
 
 	Importer := importer.NewImporter(c.Importer.ScanDir)

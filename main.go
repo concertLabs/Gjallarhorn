@@ -4,7 +4,6 @@ import (
 	"flag"
 	"log"
 
-	"github.com/quiteawful/Gjallarhorn/importer"
 	"github.com/quiteawful/Gjallarhorn/web"
 )
 
@@ -16,9 +15,9 @@ func main() {
 		log.Fatalf("could not load configfile: %v\n", err)
 	}
 
-	Importer := importer.NewImporter(c.Importer.ScanDir)
+	// Importer := importer.NewImporter(c.Importer.ScanDir)
 	WebApp := web.NewWebApp(c.Httpd.RootDir)
 
-	go Importer.Run()
+	//go Importer.Run()
 	WebApp.Run()
 }

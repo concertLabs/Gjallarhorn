@@ -1,7 +1,7 @@
 package web
 
 import (
-	"io"
+	"log"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -19,13 +19,19 @@ func NewWebApp(root string) WebApp {
 
 func (app *WebApp) Run() {
 	app.Mux.HandleFunc("/", app.IndexHandler)
-
+	app.Mux.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir(app.RootDir+"/static/"))))
 	a100 := api100.GetSubrouter("/api/v100")
 	app.Mux.PathPrefix("/api/v100").Handler(a100)
 
 	http.ListenAndServe(":8080", app.Mux)
 }
 
+// IndexHandler is the main page
 func (app *WebApp) IndexHandler(w http.ResponseWriter, r *http.Request) {
-	io.WriteString(w, "hi")
+	t, err := app.loadTemplate("base", "index")
+	if err != nil {
+		log.Printf("[Template] %v\n", err)
+		return
+	}
+	t.Execute(w, nil)
 }

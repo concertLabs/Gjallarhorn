@@ -1,7 +1,7 @@
 {
 	"Httpd": {
 		"InternalMode": true,
-		"RootDir": "data/web/html"
+		"RootDir": "data/web/"
 	},
 	"Importer": {
 		"ScanDir": "data/import",

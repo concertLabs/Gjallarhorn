@@ -1,4 +1,4 @@
-package lager
+package model
 
 type Regal struct {
 	name       string

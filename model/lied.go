@@ -1,4 +1,4 @@
-package noten
+package model
 
 type Lied struct {
 	Titel     string
@@ -8,6 +8,10 @@ type Lied struct {
 	Stimmen   []Stimme
 }
 
+func NewLied() *Lied {
+	return &Lied{}
+}
+
 func (l *Lied) Save() {
 
 }
@@ -15,3 +19,4 @@ func (l *Lied) Save() {
 func (l *Lied) Load() {
 
 }
+

@@ -1,4 +1,4 @@
-package lager
+package model
 
 type Schublade struct {
 	name   string

@@ -1,4 +1,4 @@
-package lager
+package model
 
 type Standort struct {
 	Name    string

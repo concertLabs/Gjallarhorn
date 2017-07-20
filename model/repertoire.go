@@ -1,4 +1,4 @@
-package noten
+package model
 
 type Repertoire struct {
 	name   string

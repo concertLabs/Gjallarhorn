@@ -1,4 +1,4 @@
-package noten
+package model
 
 type Stimme struct {
 	name       string

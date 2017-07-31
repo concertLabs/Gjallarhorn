@@ -7,10 +7,29 @@ import (
 	"github.com/quiteawful/Gjallarhorn/web"
 )
 
-func main() {
-	configfile := flag.String("config", "config.json", "the json formatted configuration file")
+// Args is a struct to parse the commandline arguments
+type Args struct {
+	config string
+}
+
+// DefaultOptions returns a struct with the minimal/default values
+// might be extendet later on
+func defaultArgs() Args {
+	return Args{config: "config.json"}
+}
+
+func parseArgs() Args {
+	var result = defaultArgs()
+
+	flag.StringVar(&result.config, "config", result.config, "the json formatted config file")
 	flag.Parse()
-	c, err := loadConfig(*configfile)
+
+	return result
+}
+
+func main() {
+	opts := parseArgs()
+	c, err := loadConfig(opts.config)
 	if err != nil {
 		log.Fatalf("could not load configfile: %v\n", err)
 	}

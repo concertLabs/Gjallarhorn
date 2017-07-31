@@ -115,7 +115,7 @@ func Test_loadConfig(t *testing.T) {
 	}{
 		{
 			name: "default",
-			args: args{file: "config_test.json"},
+			args: args{file: "testdata/config_test.json"},
 			want: &Config{
 				Httpd: HttpdConfig{
 					InternalMode: true,
@@ -133,13 +133,13 @@ func Test_loadConfig(t *testing.T) {
 		},
 		{
 			name:    "missing file",
-			args:    args{file: "doesnotexists.json"},
+			args:    args{file: "testdata/doesnotexists.json"},
 			want:    nil,
 			wantErr: true,
 		},
 		{
 			name:    "invalid json",
-			args:    args{file: "configfail_test.json"},
+			args:    args{file: "testdata/configfail_test.json"},
 			want:    nil,
 			wantErr: true,
 		},

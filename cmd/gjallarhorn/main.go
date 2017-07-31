@@ -4,6 +4,8 @@ import (
 	"flag"
 	"log"
 
+	"github.com/quiteawful/Gjallarhorn/lib/config"
+	"github.com/quiteawful/Gjallarhorn/lib/importer"
 	"github.com/quiteawful/Gjallarhorn/web"
 )
 
@@ -28,15 +30,15 @@ func parseArgs() Args {
 }
 
 func main() {
-	opts := parseArgs()
-	c, err := loadConfig(opts.config)
+	args := parseArgs()
+	c, err := config.Open(args.config)
 	if err != nil {
-		log.Fatalf("could not load configfile: %v\n", err)
+		log.Fatalf("could not open configfile: %v\n", err)
 	}
 
-	// Importer := importer.NewImporter(c.Importer.ScanDir)
+	Importer := importer.NewImporter(c.Importer)
 	WebApp := web.NewWebApp(c.Httpd.RootDir)
 
-	//go Importer.Run()
+	go Importer.Run()
 	WebApp.Run()
 }

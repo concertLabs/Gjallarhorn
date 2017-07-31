@@ -7,7 +7,7 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/quiteawful/Gjallarhorn/db/v100"
-	"github.com/quiteawful/Gjallarhorn/noten"
+	"github.com/quiteawful/Gjallarhorn/model"
 )
 
 func GetSubrouter(prefix string) *mux.Router {
@@ -44,7 +44,7 @@ func getLiedHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func postLiedHandler(w http.ResponseWriter, r *http.Request) {
-	var l noten.Lied
+	var l model.Lied
 	l.Titel = r.Header.Get("Titel")
 	l.Komponist = r.Header.Get("Komponist")
 	l.Genre = r.Header.Get("Genre")

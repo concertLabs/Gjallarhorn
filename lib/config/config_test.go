@@ -1,4 +1,4 @@
-package main
+package config
 
 import (
 	"bytes"
@@ -103,7 +103,7 @@ func Test_parseConfig(t *testing.T) {
 	}
 }
 
-func Test_loadConfig(t *testing.T) {
+func TestOpen(t *testing.T) {
 	type args struct {
 		file string
 	}
@@ -146,7 +146,7 @@ func Test_loadConfig(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := loadConfig(tt.args.file)
+			got, err := Open(tt.args.file)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("loadConfig() error = %v, wantErr %v", err, tt.wantErr)
 				return

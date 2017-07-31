@@ -1,4 +1,4 @@
-package main
+package config
 
 import (
 	"encoding/json"
@@ -37,7 +37,8 @@ type APIConfig struct {
 	Port int `json:"Port"`
 }
 
-func loadConfig(file string) (*Config, error) {
+// Open returns a struct with the current configuration
+func Open(file string) (*Config, error) {
 	r, err := openFile(file)
 	if err != nil {
 		return nil, err

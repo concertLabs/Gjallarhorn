@@ -1,5 +1,5 @@
 {
-	"Httpd": {
+	Httpd": {
 		"InternalMode": true,
 		"RootDir": "data/web/"
 	},

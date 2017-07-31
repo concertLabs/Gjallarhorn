@@ -2,7 +2,9 @@ package main
 
 import (
 	"encoding/json"
+	"io"
 	"io/ioutil"
+	"os"
 )
 
 // Config represents the json structure of the configuration file for Gjallarhorn
@@ -36,8 +38,31 @@ type APIConfig struct {
 }
 
 func loadConfig(file string) (*Config, error) {
-	content, err := ioutil.ReadFile(file)
+	r, err := openFile(file)
 	if err != nil {
+		return nil, err
+	}
+
+	conf, err := parseConfig(r)
+	if err != nil {
+		return nil, err
+	}
+
+	return conf, nil
+}
+
+func openFile(file string) (*os.File, error) {
+	reader, err := os.Open(file)
+	if err != nil {
+		return nil, err
+	}
+	return reader, nil
+}
+
+func parseConfig(r io.Reader) (*Config, error) {
+	content, err := ioutil.ReadAll(r)
+	if err != nil {
+		// TODO: create testcase for failing ReadAll
 		return nil, err
 	}
 

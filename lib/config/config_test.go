@@ -119,6 +119,8 @@ func TestOpen(t *testing.T) {
 			want: &Config{
 				Httpd: HttpdConfig{
 					InternalMode: true,
+					Host:         "localhost",
+					Port:         8080,
 					RootDir:      "data/web/",
 				},
 				Importer: ImportConfig{

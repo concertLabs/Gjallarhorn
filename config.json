@@ -1,11 +1,13 @@
 {
 	"Httpd": {
 		"InternalMode": true,
+		"Host": "localhost",
+		"Port": 8080,
 		"RootDir": "data/web/"
 	},
 	"Importer": {
 		"ScanDir": "data/import/",
-		"UseImporter": true
+		"UseImporter": false
 	},
 	"Api": {
 		"Port": 3000

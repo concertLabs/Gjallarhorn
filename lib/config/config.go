@@ -21,6 +21,11 @@ type HttpdConfig struct {
 	// InternalMode decides wether to use own httpd or use
 	// other server to serve html content, eg. nginx
 	InternalMode bool   `json:"InternalMode"`
+	Host         string `json:"Host"`
+	Port         int    `json:"Port"`
+	UseTLS       bool   `json:"use_tls"`
+	Certfile     string `json:"certfile"`
+	Keyfile      string `json:"keyfile"`
 	RootDir      string `json:"RootDir"`
 }
 

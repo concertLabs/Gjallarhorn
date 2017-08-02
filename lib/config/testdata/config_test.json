@@ -1,6 +1,8 @@
 {
 	"Httpd": {
 		"InternalMode": true,
+		"Host": "localhost",
+		"Port": 8080,
 		"RootDir": "data/web/"
 	},
 	"Importer": {

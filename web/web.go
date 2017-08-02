@@ -1,25 +1,41 @@
 package web
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 
 	"github.com/gorilla/mux"
 	"github.com/quiteawful/Gjallarhorn/api/v100"
+	"github.com/quiteawful/Gjallarhorn/lib/config"
 )
 
+// WebApp is our web gui
 type WebApp struct {
 	RootDir string
+	Host    string
+	Port    int
+	IsProxy bool
 	Mux     *mux.Router
 }
 
-func NewWebApp(root string) WebApp {
-	return WebApp{RootDir: root, Mux: mux.NewRouter()}
+// NewWebApp returns a new instance of our webapp
+func NewWebApp(cfg config.HttpdConfig) WebApp {
+	return WebApp{
+		RootDir: cfg.RootDir,
+		Host:    cfg.Host,
+		Port:    cfg.Port,
+		IsProxy: cfg.InternalMode,
+		Mux:     mux.NewRouter(),
+	}
 }
 
+// Name returns the name of this module
 func (app WebApp) Name() string {
 	return "web"
 }
+
+// Run is the main run func
 func (app WebApp) Run() {
 	app.Mux.HandleFunc("/", app.IndexHandler)
 	app.Mux.HandleFunc("/lied", app.LiedIndexHandler)
@@ -28,7 +44,9 @@ func (app WebApp) Run() {
 	a100 := api100.GetSubrouter("/api/v100")
 	app.Mux.PathPrefix("/api/v100").Handler(a100)
 
-	http.ListenAndServe(":8080", app.Mux)
+	url := fmt.Sprintf("%s:%d", app.Host, app.Port)
+	log.Printf("[WebApp] Start httpd on %s\n", url)
+	http.ListenAndServe(url, app.Mux)
 }
 
 // IndexHandler is the main page

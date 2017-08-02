@@ -34,22 +34,22 @@ func parseArgs() Args {
 
 func main() {
 	args := parseArgs()
-	c, err := config.Open(args.config)
+	cfg, err := config.Open(args.config)
 	if err != nil {
 		log.Fatalf("could not open configfile: %v\n", err)
 	}
 
-	Importer := importer.New(c.Importer)
-	WebApp := web.NewWebApp(c.Httpd.RootDir)
-
-	// TODO: make a service manager
-	// go Importer.Run()
-	// WebApp.Run()
-
+	// start service manager and add services
 	manager := servicemanager.NewManager(2)
 
-	manager.Add(Importer)
+	if cfg.Importer.UseImporter {
+		Importer := importer.New(cfg.Importer)
+		manager.Add(Importer)
+	}
+
+	WebApp := web.NewWebApp(cfg.Httpd)
 	manager.Add(WebApp)
+
 	manager.Start()
 	defer manager.Stop()
 

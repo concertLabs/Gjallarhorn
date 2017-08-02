@@ -17,9 +17,9 @@ type Importer struct {
 	UseImporter bool
 }
 
-// NewImporter returns a new instance of the automatic import bot
+// New returns a new instance of the automatic import bot
 // dir is the input directory where the importer searches for new pdf files
-func NewImporter(cfg config.ImportConfig) Importer {
+func New(cfg config.ImportConfig) Importer {
 	return Importer{
 		InputDir:    cfg.ScanDir,
 		UseImporter: cfg.UseImporter,
@@ -28,36 +28,46 @@ func NewImporter(cfg config.ImportConfig) Importer {
 	}
 }
 
+// Name returns the name, to satisfy the service interface
+func (i Importer) Name() string {
+	return "importer"
+}
+
 // Run scans for new files and sends them on a channel to the processor
-func (i *Importer) Run() {
+func (i Importer) Run() {
 	if !i.UseImporter {
 		log.Println("Did not start importer. UseImporter is false")
 		return
 	}
 
+	log.Printf("[Importer] Scan directory %s\n", i.InputDir)
 	for {
-		files, err := readFiles(i.InputDir)
-		if err != nil {
+		run(i.InputDir, i.Processor)
+		time.Sleep(time.Second * time.Duration(i.Wait))
+	}
+}
+
+func run(inputDir string, ch chan string) {
+	// TODO: tests need to be improved
+	files, err := readFiles(inputDir)
+	if err != nil {
+		log.Printf("[Importer] error while reading files from dir")
+		return
+	}
+
+	// process files and wait
+	for _, f := range files {
+		if !f.IsDir() {
 			continue
 		}
-		// process files and wait
-		for _, f := range files {
-			if !f.IsDir() {
-				continue
-			}
-
-			i.Processor <- i.InputDir + f.Name()
-		}
-
-		time.Sleep(time.Second * time.Duration(i.Wait))
+		ch <- inputDir + f.Name()
 	}
 }
 
 func readFiles(dir string) ([]os.FileInfo, error) {
 	files, err := ioutil.ReadDir(dir)
 	if err != nil {
-		log.Println("[Importer] readFiles: " + err.Error())
 		return nil, err
 	}
-	return files, err
+	return files, nil
 }

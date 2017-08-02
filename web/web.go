@@ -17,7 +17,10 @@ func NewWebApp(root string) WebApp {
 	return WebApp{RootDir: root, Mux: mux.NewRouter()}
 }
 
-func (app *WebApp) Run() {
+func (app WebApp) Name() string {
+	return "web"
+}
+func (app WebApp) Run() {
 	app.Mux.HandleFunc("/", app.IndexHandler)
 	app.Mux.HandleFunc("/lied", app.LiedIndexHandler)
 
@@ -29,7 +32,7 @@ func (app *WebApp) Run() {
 }
 
 // IndexHandler is the main page
-func (app *WebApp) IndexHandler(w http.ResponseWriter, r *http.Request) {
+func (app WebApp) IndexHandler(w http.ResponseWriter, r *http.Request) {
 	t, err := app.loadTemplate("base", "index")
 	if err != nil {
 		log.Printf("[Template] %v\n", err)

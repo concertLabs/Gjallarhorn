@@ -2,8 +2,9 @@
 	"Httpd": {
 		"InternalMode": true,
 		"Host": "localhost",
+		"UseTLS": false,
 		"Port": 8080,
-		"RootDir": "data/web/"
+		"AssetDir": "data/web/"
 	},
 	"Importer": {
 		"ScanDir": "data/import/",

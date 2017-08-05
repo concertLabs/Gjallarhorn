@@ -9,7 +9,7 @@ import (
 	"github.com/quiteawful/Gjallarhorn/lib/config"
 	"github.com/quiteawful/Gjallarhorn/lib/importer"
 	"github.com/quiteawful/Gjallarhorn/lib/servicemanager"
-	"github.com/quiteawful/Gjallarhorn/web"
+	"github.com/quiteawful/Gjallarhorn/lib/web"
 )
 
 // Args is a struct to parse the commandline arguments
@@ -18,7 +18,7 @@ type Args struct {
 }
 
 // DefaultOptions returns a struct with the minimal/default values
-// might be extendet later on
+// might be extended later on
 func defaultArgs() Args {
 	return Args{config: "config.json"}
 }
@@ -32,6 +32,7 @@ func parseArgs() Args {
 	return result
 }
 
+// TODO: create a (simple) universal logger
 func main() {
 	args := parseArgs()
 	cfg, err := config.Open(args.config)
@@ -47,7 +48,7 @@ func main() {
 		manager.Add(Importer)
 	}
 
-	WebApp := web.NewWebApp(cfg.Httpd)
+	WebApp, _ := web.New(cfg.Httpd)
 	manager.Add(WebApp)
 
 	manager.Start()

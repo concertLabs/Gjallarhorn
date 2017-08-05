@@ -6,12 +6,12 @@ import (
 	"strings"
 )
 
-func (app *WebApp) loadTemplate(name, file string) (*template.Template, error) {
+func (app *App) loadTemplate(name, file string) (*template.Template, error) {
 	if !strings.HasSuffix(file, ".html") {
 		file += ".html"
 	}
-	basefile := path.Join(app.RootDir, "templates", "_base.html")
-	tempfile := path.Join(app.RootDir, "templates", file)
+	basefile := path.Join(app.AssetDir, "templates", "_base.html")
+	tempfile := path.Join(app.AssetDir, "templates", file)
 
 	t := template.New(name)
 	t, err := t.ParseFiles(basefile, tempfile)

@@ -28,10 +28,10 @@ func New(cfg config.HttpdConfig) (*App, error) {
 		Port:     cfg.Port,
 		URL:      fmt.Sprintf("%s:%d", cfg.Host, cfg.Port),
 		UseTLS:   cfg.UseTLS,
-		Cert:     cfg.Certfile,
-		Key:      cfg.Keyfile,
+		Certfile: cfg.Certfile,
+		Keyfile:  cfg.Keyfile,
 		IsProxy:  cfg.InternalMode,
-		AssetDir: cfg.RootDir,
+		AssetDir: cfg.AssetDir,
 		Mux:      mux.NewRouter(),
 	}
 
@@ -47,13 +47,26 @@ func (a App) Name() string { return "web" }
 
 // Run starts the webserver
 func (a App) Run() {
-	// maybe TLS only with redirect
-	http.ListenAndServe(a.URL, a.Mux)
+	if a.UseTLS {
+		// maybe TLS only with redirect
+		http.ListenAndServeTLS(a.URL, a.Certfile, a.Keyfile, a.Mux)
+	} else {
+		http.ListenAndServe(a.URL, a.Mux)
+	}
 }
 
 func (a App) addHandlers() error {
 
-	a.Mux.PathPrefix("/stati/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir(a.AssetDir+"/static/"))))
+	a.Mux.HandleFunc("/", a.indexHandler)
+
+	// personen
+	a.Mux.HandleFunc("/person", a.person)
+	a.Mux.HandleFunc("/person/add", a.personAdd)
+
+	// just static stuff, for reading
+	pp := a.Mux.PathPrefix("/static/")
+	fs := http.FileServer(http.Dir(a.AssetDir + "/static/"))
+	pp.Handler(http.StripPrefix("/static/", fs))
 
 	return nil
 }

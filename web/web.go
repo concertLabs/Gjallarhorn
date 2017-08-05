@@ -22,7 +22,7 @@ type WebApp struct {
 // NewWebApp returns a new instance of our webapp
 func NewWebApp(cfg config.HttpdConfig) WebApp {
 	return WebApp{
-		RootDir: cfg.RootDir,
+		RootDir: cfg.AssetDir,
 		Host:    cfg.Host,
 		Port:    cfg.Port,
 		IsProxy: cfg.InternalMode,

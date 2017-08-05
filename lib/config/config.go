@@ -23,10 +23,10 @@ type HttpdConfig struct {
 	InternalMode bool   `json:"InternalMode"`
 	Host         string `json:"Host"`
 	Port         int    `json:"Port"`
-	UseTLS       bool   `json:"use_tls"`
-	Certfile     string `json:"certfile"`
-	Keyfile      string `json:"keyfile"`
-	RootDir      string `json:"RootDir"`
+	UseTLS       bool   `json:"UseTLS"`
+	Certfile     string `json:"Certfile"`
+	Keyfile      string `json:"Keyfile"`
+	AssetDir     string `json:"AssetDir"`
 }
 
 // ImportConfig controls the automatic importer to scan the filesystem for new pdf files
@@ -78,4 +78,27 @@ func parseConfig(r io.Reader) (*Config, error) {
 		return nil, err
 	}
 	return c, nil
+}
+
+// DefaultConfig can be used to store a fresh config
+func DefaultConfig() *Config {
+	cfg := &Config{
+		Httpd: HttpdConfig{
+			InternalMode: true,
+			Host:         "localhost",
+			Port:         8080,
+			UseTLS:       false,
+			Certfile:     "",
+			Keyfile:      "",
+		},
+		Importer: ImportConfig{
+			ScanDir:     "",
+			UseImporter: false,
+		},
+		API: APIConfig{
+			Port: 3000,
+		},
+	}
+
+	return cfg
 }

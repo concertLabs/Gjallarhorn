@@ -121,7 +121,7 @@ func TestOpen(t *testing.T) {
 					InternalMode: true,
 					Host:         "localhost",
 					Port:         8080,
-					RootDir:      "data/web/",
+					AssetDir:     "data/web/",
 				},
 				Importer: ImportConfig{
 					ScanDir:     "data/import/",

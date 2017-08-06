@@ -21,9 +21,9 @@ func NewPerson(name, surname string) (*Person, error) {
 // TODO: add limit and offset
 func GetPerson() ([]Person, error) {
 	return []Person{
-		Person{1, "Peter", "Pan"},
-		Person{2, "Klaus-Dieter", "Wiegand"},
-		Person{3, "Thomas", "Gottschalk"},
-		Person{4, "Michael", "Schumacher"},
+		Person{ID: 1, Name: "Peter", Surname: "Pan"},
+		Person{ID: 2, Name: "Klaus-Dieter", Surname: "Wiegand"},
+		Person{ID: 3, Name: "Thomas", Surname: "Gottschalk"},
+		Person{ID: 4, Name: "Michael", Surname: "Schumacher"},
 	}, nil
 }

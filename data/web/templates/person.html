@@ -1,8 +1,8 @@
 {{define "content"}}
     <h2>Personen</h2>
     <ul class="uk-list uk-list-line">
-    {{range .Person}}
-        <li>{{ .Name }}</li>
+    {{ range $i, $e := .Person }}
+        <li>{{$i}}i. {{ $e.Name }}</li>
     {{end}}
     </ul>
 {{end}}

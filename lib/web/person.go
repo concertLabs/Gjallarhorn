@@ -1,6 +1,7 @@
 package web
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 
@@ -23,7 +24,14 @@ func (a *App) person(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	t.Execute(w, p)
+	data := struct {
+		Person []model.Person
+	}{
+		Person: p,
+	}
+
+	fmt.Printf("Data: %+v\n", data)
+	t.Execute(w, &data)
 }
 
 func (a *App) personAdd(w http.ResponseWriter, r *http.Request) {

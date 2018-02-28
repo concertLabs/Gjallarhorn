@@ -25,6 +25,7 @@ func (m *Manager) Start() error {
 
 // Stop kills all services
 func (m *Manager) Stop() {
+	// NOTE: we can do some cleanup work in this function
 	return
 }
 

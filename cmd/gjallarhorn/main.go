@@ -17,10 +17,12 @@ type Args struct {
 	config string
 }
 
-// DefaultOptions returns a struct with the minimal/default values
+// defaultArgs returns a struct with the minimal/default values
 // might be extended later on
 func defaultArgs() Args {
-	return Args{config: "config.json"}
+	return Args{
+		config: "config.json",
+	}
 }
 
 func parseArgs() Args {
@@ -44,12 +46,12 @@ func main() {
 	manager := servicemanager.NewManager(2)
 
 	if cfg.Importer.UseImporter {
-		Importer := importer.New(cfg.Importer)
-		manager.Add(Importer)
+		importsrvc := importer.New(cfg.Importer)
+		manager.Add(importsvc)
 	}
 
-	WebApp, _ := web.New(cfg.Httpd)
-	manager.Add(WebApp)
+	websrvc, _ := web.New(cfg.Httpd)
+	manager.Add(websrvc)
 
 	manager.Start()
 	defer manager.Stop()
@@ -62,6 +64,7 @@ func main() {
 		for {
 			select {
 			case <-ctrl:
+				log.Println("stopped by ctrl-c")
 				os.Exit(0)
 			case <-ch:
 				continue

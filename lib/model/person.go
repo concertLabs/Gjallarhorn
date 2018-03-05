@@ -1,5 +1,7 @@
 package model
 
+// TODO: make a memberverwaltung out of it
+
 // Person can be used as texter, musician or komponist
 type Person struct {
 	ID      int

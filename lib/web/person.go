@@ -31,10 +31,16 @@ func (a *App) person(w http.ResponseWriter, r *http.Request) {
 	}
 
 	fmt.Printf("Data: %+v\n", data)
+
 	t.Execute(w, &data)
 }
 
 func (a *App) personAdd(w http.ResponseWriter, r *http.Request) {
+	if r.Method != "POST" {
+		fmt.Fprintf(w, "wrong method")
+		return
+	}
+
 	name := r.FormValue("name")
 	surname := r.FormValue("surname")
 

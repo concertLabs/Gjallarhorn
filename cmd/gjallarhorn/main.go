@@ -28,7 +28,7 @@ func defaultArgs() Args {
 func parseArgs() Args {
 	var result = defaultArgs()
 
-	flag.StringVar(&result.config, "config", result.config, "the json formatted config file")
+	flag.StringVar(&result.config, "config.json", result.config, "the json formatted config file")
 	flag.Parse()
 
 	return result
@@ -47,7 +47,7 @@ func main() {
 
 	if cfg.Importer.UseImporter {
 		importsrvc := importer.New(cfg.Importer)
-		manager.Add(importsvc)
+		manager.Add(importsrvc)
 	}
 
 	websrvc, _ := web.New(cfg.Httpd)

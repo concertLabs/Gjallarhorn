@@ -1,38 +1,38 @@
 {{define "base"}}
 <!DOCTYPE html>
 <html>
-    <head>
-        <title></title>
-        <link rel="stylesheet" href="/static/css/uikit.min.css" />
-        <script src="/static/js/jquery.min.js"></script>
-        <script src="/static/js/uikit.min.js"></script>
-        <script src="/static/js/uikit-icon.min.js"></script>
-    </head>
-    <body>
-        <div class="uk-container">
-            <div class="uk-navbar-container" uk-navbar>
-                <div class="uk-navbar-left">
-                    <ul class="uk-navbar-nav">
-                        <li><a href="/">Home</a></li>
-                        <li>
-                            <a href="/lieder">Lieder</a>
-                            <div class="uk-navbar-dropdown">
-                                <ul class="uk-nav uk-navbar-dropdown-nav">
-                                    <li><a href="/lieder/add">Hinzufügen</a></li>
-                                    <li><a href="/">Suchen</a></li>
-                                    <li><a href="/">Anzeigen</a></li>
-                                </ul>
-                            </div>
-                        </li>
-                        <li><a href="/">Repertoire</a></li>
-                        <li><a href="/">Warteschlange</a></li>
-                        <li><a href="/person">Personen</a></li>
-                    </ul>
-                </div>
-            </div>
-            <nav class="uk-navbar-container" uk-navbar>
-            {{template "content"}}
-        </div>
-    </body>
+	<head>
+		<title></title>
+		<link rel="stylesheet" href="/static/css/uikit.min.css" />
+		<script src="/static/js/jquery.min.js"></script>
+		<script src="/static/js/uikit.min.js"></script>
+		<script src="/static/js/uikit-icon.min.js"></script>
+	</head>
+	<body>
+		<div class="uk-container">
+			<div class="uk-navbar-container" uk-navbar>
+				<div class="uk-navbar-left">
+					<ul class="uk-navbar-nav">
+						<li><a href="/">Home</a></li>
+						<li>
+							<a href="/lieder">Lieder</a>
+							<div class="uk-navbar-dropdown">
+								<ul class="uk-nav uk-navbar-dropdown-nav">
+									<li><a href="/lieder/add">Hinzufügen</a></li>
+									<li><a href="/">Suchen</a></li>
+									<li><a href="/">Anzeigen</a></li>
+								</ul>
+							</div>
+						</li>
+						<li><a href="/">Repertoire</a></li>
+						<li><a href="/">Warteschlange</a></li>
+						<li><a href="/person">Personen</a></li>
+					</ul>
+				</div>
+			</div>
+			<!-- <nav class="uk-navbar-container" uk-navbar> -->
+			{{template "content" . }}
+		</div>
+	</body>
 </html>
 {{end}}

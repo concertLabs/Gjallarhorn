@@ -5,6 +5,8 @@ import (
 	"net/http"
 )
 
+// NOTE: can be deleted???
+
 func (app *WebApp) LiedIndexHandler(w http.ResponseWriter, r *http.Request) {
 	t, err := app.loadTemplate("base", "lied_index")
 	if err != nil {

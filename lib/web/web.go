@@ -2,11 +2,14 @@ package web
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/gorilla/mux"
 	"github.com/quiteawful/Gjallarhorn/lib/config"
 )
+
+// NOTE: can be deleted??? dupe of lib/web/web.go
 
 type App struct {
 	Host     string
@@ -47,6 +50,8 @@ func (a App) Name() string { return "web" }
 
 // Run starts the webserver
 func (a App) Run() {
+	// TODO: add custom logger to App struct
+	log.Printf("Start httpd on %s\n", a.URL)
 	if a.UseTLS {
 		// maybe TLS only with redirect
 		http.ListenAndServeTLS(a.URL, a.Certfile, a.Keyfile, a.Mux)

@@ -61,8 +61,10 @@ func (a App) Run() {
 }
 
 func (a App) addHandlers() error {
-
+	// NOTE: there will never be returned an error, might change func signature
 	a.Mux.HandleFunc("/", a.indexHandler)
+
+	a.Mux.HandleFunc("/login", a.loginHandler)
 
 	// personen
 	a.Mux.HandleFunc("/person", a.person)
@@ -71,7 +73,7 @@ func (a App) addHandlers() error {
 	// just static stuff, for reading
 	pp := a.Mux.PathPrefix("/static/")
 	fs := http.FileServer(http.Dir(a.AssetDir + "/static/"))
-	pp.Handler(http.StripPrefix("/static/", fs))
+	pp.Handler(http.StripPrefix("/static/", fs)) // ? how does that work again o.O
 
 	return nil
 }

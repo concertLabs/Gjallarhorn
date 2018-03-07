@@ -1,8 +1,9 @@
 {{define "content"}}
     <h2>Liste aller vorhandenen Lieder</h2>
+    <a href="/lied/add">Neues Lied hinzufügen</a>
     <ul class="uk-list uk-list-line">
-    {{ range .}}
-        <li><a href="/">{{.Title}}</a></li>
+    {{ range $i, $e := .Lied}}
+    	<li><a href="/lied/show/{{$e.ID}}">{{$e.Title}}</a></li>
     {{end}}
     </ul>
 {{end}}

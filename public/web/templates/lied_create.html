@@ -1,0 +1,56 @@
+{{define "content"}}
+	<h2>Neues Lied hinzufügen</h2>
+
+	<form class="uk-form-horizontal" method="post" action="/lied/add">
+
+		<div class="uk-margin">
+			<label class="uk-form-label" for="form-titel">Titel:</label>
+			<div class="uk-form-controls">
+				<input class="uk-input" id="form-titel" type="text" name="titel">
+			</div>
+		</div>
+
+		<div class="uk-margin">
+			<label class="uk-form-label" for="form-untertitel">Untertitel:</label>
+			<div class="uk-form-controls">
+				<input class="uk-input" id="form-untertitel" type="text" name="untertitel">
+			</div>
+		</div>
+
+		<div class="uk-margin">
+			<label class="uk-form-label" for="form-jahr">Jahr:</label>
+			<div class="uk-form-controls">
+				<input class="uk-input" id="form-jahr" type="text" name="jahr">
+			</div>
+		</div>
+
+		<div class="uk-margin">
+			<label class="uk-form-label" for="form-komponist">Komponist:</label>
+			<div class="uk-form-controls">
+				<input class="uk-input" id="form-komponist" type="text" name="komponist">
+			</div>
+		</div>
+
+		<div class="uk-margin">
+			<label class="uk-form-label" for="form-text">Text von :</label>
+			<div class="uk-form-controls">
+				<input class="uk-input" id="form-text" type="text" name="text">
+			</div>
+		</div>
+
+		<div class="uk-margin">
+			<label class="uk-form-label" for="form-arrangeur">Arrangeur:</label>
+			<div class="uk-form-controls">
+				<input class="uk-input" id="form-arrangeur" type="text" name="arrangeur">
+			</div>
+		</div>
+
+		<div class="uk-margin">
+			<label class="uk-form-label" for="form-verlag">Verlag:</label>
+			<div class="uk-form-controls">
+				<input class="uk-input" id="form-verlag" type="text" name="verlag">
+			</div>
+		</div>
+
+	</form>
+{{end}}

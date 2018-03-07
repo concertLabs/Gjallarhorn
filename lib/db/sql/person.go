@@ -159,3 +159,7 @@ func (s *PersonProvider) Delete(id int) error {
 func (s *PersonProvider) Search(q string) ([]*gj.Person, error) {
 	panic("not implemented")
 }
+
+func (s *PersonProvider) Edit(p *gj.Person) error {
+	panic(nil)
+}

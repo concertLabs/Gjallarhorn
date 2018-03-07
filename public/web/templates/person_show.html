@@ -1,17 +1,17 @@
 {{define "content"}}
-	<h2>{{.Person.Name}}, {{.Person.Surname}}</h2>
+<h2>{{.Person.Name}}, {{.Person.Surname}}</h2>
 
-	<ul>
-		<li>Name: {{.Person.Name}}</li>
-		<li>Vorname: {{.Person.Surname}}</li>
-		<li>Strasse: {{.Person.Street}}</li>
-		<li>PLZ: {{.Person.Zipcode}}</li>
-		<li>Ort: {{.Person.City}}</li>
-		<li>Geburtstag: {{.Person.BirthDate}}</li>
-		<li>Mitglied seit: {{.Person.MemberSince}}</li>
-		<li>Geburtstag: {{.Person.BirthDate}}</li>
-		<li>Email: {{.Person.Email}}</li>
-	</ul>
+<ul>
+	<li>Name: {{.Person.Name}}</li>
+	<li>Vorname: {{.Person.Surname}}</li>
+	<li>Strasse: {{.Person.Street}}</li>
+	<li>PLZ: {{.Person.Zipcode}}</li>
+	<li>Ort: {{.Person.City}}</li>
+	<li>Geburtstag: {{.Person.BirthDate}}</li>
+	<li>Mitglied seit: {{.Person.MemberSince}}</li>
+	<li>Geburtstag: {{.Person.BirthDate}}</li>
+	<li>Email: {{.Person.Email}}</li>
+</ul>
 
-	<a href="/person/delete/{{.Person.ID}}">Person löschen</a>
+<a href="/person/delete/{{.Person.ID}}">Person löschen</a>
 {{end}}

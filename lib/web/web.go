@@ -29,10 +29,17 @@ type App struct {
 	// Handler with Routes
 	IndexHandler  *IndexHandler
 	PersonHandler *PersonHandler
+	LiedHandler   *LiedHandler
+	// VerlagHandler *VerlagHandler
 }
 
 // New creates a new web App based on the main config
-func New(cfg config.HttpdConfig, personService gjallarhorn.PersonService) (*App, error) {
+func New(
+	cfg config.HttpdConfig,
+	ps gjallarhorn.PersonService,
+	ls gjallarhorn.LiedService,
+	vs gjallarhorn.VerlagService) (*App, error) {
+
 	app := &App{
 		Host:     cfg.Host,
 		Port:     cfg.Port,
@@ -48,8 +55,9 @@ func New(cfg config.HttpdConfig, personService gjallarhorn.PersonService) (*App,
 	}
 
 	app.IndexHandler = NewIndexHandler(app.Renderer)
-	app.PersonHandler = NewPersonHandler(personService, app.Renderer)
-	// app.LiederHandler= NewLiederHandler(app.Renderer)
+	app.PersonHandler = NewPersonHandler(ps, app.Renderer)
+	app.LiedHandler = NewLiedHandler(ls, ps, vs, app.Renderer)
+	// app.VerlagHandler = NewVerlagHandler(vs, app.Renderer)
 
 	err := app.addHandlers()
 	if err != nil {
@@ -80,12 +88,17 @@ func (a App) addHandlers() error {
 
 	// create each handler
 	a.Mux.HandleFunc("/", a.IndexHandler.Index).Methods("GET")
-	a.Mux.HandleFunc("/person", a.PersonHandler.Index).Methods("GET")                 // show all
-	a.Mux.HandleFunc("/person/add", a.PersonHandler.CreateGET).Methods("GET")         // add new
-	a.Mux.HandleFunc("/person/add", a.PersonHandler.CreatePOST).Methods("POST")       // add new
-	a.Mux.HandleFunc("/person/show/{id:[0-9]+}", a.PersonHandler.Show).Methods("GET") // show a single person
-	a.Mux.HandleFunc("/person/delete/{id:[0-9]+}", a.PersonHandler.DeleteGET).Methods("GET")
+	a.Mux.HandleFunc("/person", a.PersonHandler.Index).Methods("GET") // show all
+	// a.Mux.HandleFunc("/person/add", a.PersonHandler.CreateGET).Methods("GET")         // add new
+	a.Mux.HandleFunc("/person/add", plainTemplate("person_create", a.Renderer)).Methods("GET")                  // add new
+	a.Mux.HandleFunc("/person/add", parseForm(a.PersonHandler.Create)).Methods("POST")                          // add new
+	a.Mux.HandleFunc("/person/show/{id:[0-9]+}", parseID(a.PersonHandler.Show, "/person/show/")).Methods("GET") // show a single person
+	a.Mux.HandleFunc("/person/delete/{id:[0-9]+}", parseID(a.PersonHandler.DeleteGET, "/person/delete/")).Methods("GET")
 	a.Mux.HandleFunc("/person/delete/{id:[0-9]+}", a.PersonHandler.DeletePOST).Methods("POST")
+
+	a.Mux.HandleFunc("/lied", a.LiedHandler.Index).Methods("GET")
+	a.Mux.HandleFunc("/lied/add", plainTemplate("lied_create", a.Renderer)).Methods("GET")
+	a.Mux.HandleFunc("/lied/add", parseForm(a.LiedHandler.Create)).Methods("POST")
 
 	// just static stuff, for reading
 	pp := a.Mux.PathPrefix("/static/")

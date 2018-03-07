@@ -2,7 +2,7 @@
     <h2>Personen</h2>
     <ul class="uk-list uk-list-line">
     {{ range $i, $e := .Person }}
-        <li>{{$i}}. {{ $e.Name }}</li>
+    	<li>{{$i}}. {{$e.Surname}} {{ $e.Name }}</li>
     {{end}}
     </ul>
 {{end}}

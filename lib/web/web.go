@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
+	gjallarhorn "github.com/quiteawful/Gjallarhorn"
 	"github.com/quiteawful/Gjallarhorn/lib/config"
 )
 
@@ -22,10 +23,16 @@ type App struct {
 	AssetDir string
 
 	Mux *mux.Router
+
+	Renderer *Renderer
+
+	// Handler with Routes
+	IndexHandler  *IndexHandler
+	PersonHandler *PersonHandler
 }
 
 // New creates a new web App based on the main config
-func New(cfg config.HttpdConfig) (*App, error) {
+func New(cfg config.HttpdConfig, personService gjallarhorn.PersonService) (*App, error) {
 	app := &App{
 		Host:     cfg.Host,
 		Port:     cfg.Port,
@@ -36,7 +43,13 @@ func New(cfg config.HttpdConfig) (*App, error) {
 		IsProxy:  cfg.InternalMode,
 		AssetDir: cfg.AssetDir,
 		Mux:      mux.NewRouter(),
+
+		Renderer: NewRenderer(cfg.AssetDir),
 	}
+
+	app.IndexHandler = NewIndexHandler(app.Renderer)
+	app.PersonHandler = NewPersonHandler(personService, app.Renderer)
+	// app.LiederHandler= NewLiederHandler(app.Renderer)
 
 	err := app.addHandlers()
 	if err != nil {
@@ -54,21 +67,22 @@ func (a App) Run() {
 	log.Printf("Start httpd on %s\n", a.URL)
 	if a.UseTLS {
 		// maybe TLS only with redirect
-		http.ListenAndServeTLS(a.URL, a.Certfile, a.Keyfile, a.Mux)
+		log.Fatal(http.ListenAndServeTLS(a.URL, a.Certfile, a.Keyfile, a.Mux))
 	} else {
-		http.ListenAndServe(a.URL, a.Mux)
+		log.Fatal(http.ListenAndServe(a.URL, a.Mux))
 	}
 }
 
 func (a App) addHandlers() error {
 	// NOTE: there will never be returned an error, might change func signature
-	a.Mux.HandleFunc("/", a.indexHandler)
+	// TODO: there needs to be a huuge refactoring
+	// we need a seperate api path for all this stuff
 
-	a.Mux.HandleFunc("/login", a.loginHandler)
-
-	// personen
-	a.Mux.HandleFunc("/person", a.person)
-	a.Mux.HandleFunc("/person/add", a.personAdd)
+	// create each handler
+	a.Mux.HandleFunc("/", a.IndexHandler.Index).Methods("GET")
+	a.Mux.HandleFunc("/person", a.PersonHandler.Index).Methods("GET")           // show all
+	a.Mux.HandleFunc("/person/add", a.PersonHandler.CreateGET).Methods("GET")   // add new
+	a.Mux.HandleFunc("/person/add", a.PersonHandler.CreatePOST).Methods("POST") // add new
 
 	// just static stuff, for reading
 	pp := a.Mux.PathPrefix("/static/")

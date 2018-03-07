@@ -10,6 +10,7 @@ import (
 type args struct {
 	command string
 	config  string
+	folder  string // the path to put our data, html, ... folders
 }
 
 const (
@@ -22,6 +23,7 @@ func parseArgs() args {
 
 	flag.StringVar(&r.command, "cmd", cmdNothing, "noop: do nothing, db: init database")
 	flag.StringVar(&r.config, "config", "config.json", "path to the json formatted config file, default: config.json")
+	flag.StringVar(&r.path, "path", "./gj", "path to the data folder (does not need to exist), default: ./gj")
 
 	flag.Parse()
 }

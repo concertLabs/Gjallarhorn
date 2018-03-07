@@ -44,6 +44,12 @@ const (
 			VALUES( $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11);
 
 	`
+	deletePerson = `
+		DELETE FROM 
+			person
+		WHERE
+			id = $1;
+	`
 )
 
 type PersonProvider struct {
@@ -51,27 +57,27 @@ type PersonProvider struct {
 }
 
 func (s *PersonProvider) Get(id int) (*gj.Person, error) {
-	var x *gj.Person
+	var x gj.Person
 
 	r := s.DB.QueryRow(selectPerson+" WHERE id = $1;", id)
 	err := r.Scan(
-		x.ID,
-		x.Name,
-		x.Surname,
-		x.Street,
-		x.Zipcode,
-		x.City,
-		x.BirthDate,
-		x.MemberSince,
-		x.Email,
-		x.Password,
-		x.AccessLevel,
-		x.CreatedAt,
+		&x.ID,
+		&x.Name,
+		&x.Surname,
+		&x.Street,
+		&x.Zipcode,
+		&x.City,
+		&x.BirthDate,
+		&x.MemberSince,
+		&x.Email,
+		&x.Password,
+		&x.AccessLevel,
+		&x.CreatedAt,
 	)
 	if err != nil {
 		return nil, err
 	}
-	return x, nil
+	return &x, nil
 }
 
 func (s *PersonProvider) GetAll() ([]*gj.Person, error) {
@@ -138,7 +144,16 @@ func (s *PersonProvider) Create(p *gj.Person) error {
 }
 
 func (s *PersonProvider) Delete(id int) error {
-	panic("not implemented")
+	if id <= 0 {
+		return fmt.Errorf("id must not smaller zero")
+	}
+
+	_, err := s.DB.Exec(deletePerson, id)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (s *PersonProvider) Search(q string) ([]*gj.Person, error) {

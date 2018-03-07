@@ -1,0 +1,11 @@
+{{define "content"}}
+	<h2>Warnung!</h2>
+
+	Möchten Sie wirklich {{.Person.Name}}, {{.Person.Surname}} löschen?
+	<form class="uk-form-horizontal" method="post" action="/person/delete/{{.Person.ID}}">
+		<input type="hidden" name="delete" value="ok">
+		<input type="submit" value="Person löschen">	
+	</form>
+
+	<a href="/person">Zurück zur Personenliste</a>
+{{end}}

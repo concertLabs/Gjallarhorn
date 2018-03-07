@@ -80,9 +80,12 @@ func (a App) addHandlers() error {
 
 	// create each handler
 	a.Mux.HandleFunc("/", a.IndexHandler.Index).Methods("GET")
-	a.Mux.HandleFunc("/person", a.PersonHandler.Index).Methods("GET")           // show all
-	a.Mux.HandleFunc("/person/add", a.PersonHandler.CreateGET).Methods("GET")   // add new
-	a.Mux.HandleFunc("/person/add", a.PersonHandler.CreatePOST).Methods("POST") // add new
+	a.Mux.HandleFunc("/person", a.PersonHandler.Index).Methods("GET")                 // show all
+	a.Mux.HandleFunc("/person/add", a.PersonHandler.CreateGET).Methods("GET")         // add new
+	a.Mux.HandleFunc("/person/add", a.PersonHandler.CreatePOST).Methods("POST")       // add new
+	a.Mux.HandleFunc("/person/show/{id:[0-9]+}", a.PersonHandler.Show).Methods("GET") // show a single person
+	a.Mux.HandleFunc("/person/delete/{id:[0-9]+}", a.PersonHandler.DeleteGET).Methods("GET")
+	a.Mux.HandleFunc("/person/delete/{id:[0-9]+}", a.PersonHandler.DeletePOST).Methods("POST")
 
 	// just static stuff, for reading
 	pp := a.Mux.PathPrefix("/static/")

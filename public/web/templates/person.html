@@ -1,8 +1,8 @@
 {{define "content"}}
     <h2>Personen</h2>
-    <ul class="uk-list uk-list-line">
+    <a href="/person/add">Neue Person hinzufügen</a>
     {{ range $i, $e := .Person }}
-    <li>{{$i}}. {{$e.Surname}} {{ $e.Name }} <a href="/person/show/{{$e.ID}}">Anzeigen</a></li>
+    	<li>{{$i}}. {{$e.Surname}} {{ $e.Name }} <a href="/person/show/{{$e.ID}}">Anzeigen</a></li>
     {{end}}
     </ul>
 {{end}}

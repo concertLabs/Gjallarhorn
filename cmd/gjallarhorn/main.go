@@ -7,6 +7,7 @@ import (
 	"os/signal"
 
 	"github.com/quiteawful/Gjallarhorn/lib/config"
+	"github.com/quiteawful/Gjallarhorn/lib/db/sql"
 	"github.com/quiteawful/Gjallarhorn/lib/importer"
 	"github.com/quiteawful/Gjallarhorn/lib/servicemanager"
 	"github.com/quiteawful/Gjallarhorn/lib/web"
@@ -50,7 +51,13 @@ func main() {
 		manager.Add(importsrvc)
 	}
 
-	websrvc, _ := web.New(cfg.Httpd)
+	db, err := sql.NewSqlite3DB("mvd.db")
+	if err != nil {
+		log.Fatal(err)
+	}
+	ps := &sql.PersonProvider{DB: db}
+
+	websrvc, _ := web.New(cfg.Httpd, ps)
 	manager.Add(websrvc)
 
 	manager.Start()

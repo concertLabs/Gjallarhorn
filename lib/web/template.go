@@ -2,6 +2,8 @@ package web
 
 import (
 	"html/template"
+	"io"
+	"log"
 	"path"
 	"strings"
 )
@@ -17,18 +19,33 @@ func NewRenderer(assetDir string) *Renderer {
 	return &Renderer{AssetDir: assetDir}
 }
 
-func (p *Renderer) LoadTemplate(name, file string) (*template.Template, error) {
+func (p *Renderer) loadTemplate(name, file string) error {
 	if !strings.HasSuffix(file, ".html") {
 		file += ".html"
 	}
 	basefile := path.Join(p.AssetDir, "templates", "_base.html")
 	tempfile := path.Join(p.AssetDir, "templates", file)
 
-	t := template.New(name)
-	t, err := t.ParseFiles(basefile, tempfile)
+	// Maybe we can cache this
+	var err error
+	p.T = template.New(name)
+	p.T, err = p.T.ParseFiles(basefile, tempfile)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	return t, nil
+	return nil
+}
+
+func (p *Renderer) Render(name, file string, w io.Writer, data interface{}) error {
+	err := p.loadTemplate(name, file)
+	if err != nil {
+		log.Printf("error while loading template %s: %v\n", file, err)
+		return err
+	}
+	err = p.T.Execute(w, data)
+	if err != nil {
+		log.Printf("error while rendering %s: %v\n", p.T.Name(), err)
+	}
+	return nil
 }

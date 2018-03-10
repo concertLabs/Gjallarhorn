@@ -1,7 +1,6 @@
 package web
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 )
@@ -15,12 +14,9 @@ func NewIndexHandler(_render *Renderer) *IndexHandler {
 }
 
 func (h *IndexHandler) Index(w http.ResponseWriter, r *http.Request) {
-	t, err := h.render.LoadTemplate("base", "index")
+	err := h.render.Render("base", "index", w, nil)
 	if err != nil {
 		log.Printf("error while parsing template: %v\n", err)
-		fmt.Fprintf(w, "error while parsing template")
 		return
 	}
-
-	t.Execute(w, nil)
 }

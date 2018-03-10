@@ -33,35 +33,40 @@ func (h *PersonHandler) Index(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	t, err := h.render.LoadTemplate("base", "person_index")
-	if err != nil {
-		log.Printf("error while parsing template: %v\n", err)
-		return
-	}
-
 	data := struct {
 		Person []*gj.Person
 	}{
 		Person: p,
 	}
 
-	t.Execute(w, &data)
+	err = h.render.Render("base", "person_index", w, &data)
+	if err != nil {
+		log.Printf("error while parsing template: %v\n", err)
+		return
+	}
+}
+
+// Create loads the html template and prints it out
+func (h *PersonHandler) Create(w http.ResponseWriter, r *http.Request) {
+	err := h.render.Render("base", "person_create", w, nil)
+	if err != nil {
+		log.Printf("error while executing template: %v\n", err)
+		return
+	}
 }
 
 // Create receives the form data from CreateGET and inserts the data in the database
-func (h *PersonHandler) Create(w http.ResponseWriter, r *http.Request) {
-	v := r.Form
-	// TODO: change to v url.Values
+func (h *PersonHandler) CreatePOST(w http.ResponseWriter, r *http.Request) {
 	var p gj.Person
-	p.Name = v.Get("name")
-	p.Surname = v.Get("surname")
-	p.Street = v.Get("street")
-	p.Zipcode = v.Get("zipcode")
-	p.City = v.Get("city")
-	p.BirthDate = v.Get("birth_date")
-	p.MemberSince = v.Get("member_since")
-	p.Email = v.Get("email")
-	p.Password = v.Get("password")
+	p.Name = r.Form.Get("name")
+	p.Surname = r.Form.Get("surname")
+	p.Street = r.Form.Get("street")
+	p.Zipcode = r.Form.Get("zipcode")
+	p.City = r.Form.Get("city")
+	p.BirthDate = r.Form.Get("birth_date")
+	p.MemberSince = r.Form.Get("member_since")
+	p.Email = r.Form.Get("email")
+	p.Password = r.Form.Get("password")
 
 	err := h.personProvider.Create(&p)
 	if err != nil {
@@ -81,42 +86,38 @@ func (h *PersonHandler) Show(w http.ResponseWriter, id int) {
 		return
 	}
 
-	t, err := h.render.LoadTemplate("base", "person_show")
-	if err != nil {
-		log.Printf("error while parsing template: %v\n", err)
-		return
-	}
-
 	data := struct {
 		Person *gj.Person
 	}{
 		Person: p,
 	}
 
-	t.Execute(w, &data)
+	err = h.render.Render("base", "person_show", w, &data)
+	if err != nil {
+		log.Printf("error while parsing template: %v\n", err)
+		return
+	}
 }
 
 // DeleteGET show the user a conformation page wether he really wants to delete the person
-func (h *PersonHandler) DeleteGET(w http.ResponseWriter, id int) {
+func (h *PersonHandler) Delete(w http.ResponseWriter, id int) {
 	p, err := h.personProvider.Get(id)
 	if err != nil {
 		log.Printf("error while getting person: %v\n", err)
 		return
 	}
 
-	t, err := h.render.LoadTemplate("base", "person_delete")
-	if err != nil {
-		log.Printf("error while parsing template: %v\n", err)
-		return
-	}
-
 	data := struct {
 		Person *gj.Person
 	}{
 		Person: p,
 	}
 
-	t.Execute(w, &data)
+	err = h.render.Render("base", "person_delete", w, &data)
+	if err != nil {
+		log.Printf("error while parsing template: %v\n", err)
+		return
+	}
 }
 
 // DeletePOST receives a conformation from DeleteGET and deltes the person

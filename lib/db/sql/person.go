@@ -139,7 +139,6 @@ func (s *PersonProvider) Create(p *gj.Person) error {
 	if err != nil {
 		return err
 	}
-
 	return nil
 }
 
@@ -161,5 +160,5 @@ func (s *PersonProvider) Search(q string) ([]*gj.Person, error) {
 }
 
 func (s *PersonProvider) Edit(p *gj.Person) error {
-	panic(nil)
+	panic("not implemented")
 }

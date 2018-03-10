@@ -1,0 +1,15 @@
+{{define "content"}}
+<h2>Neue Gruppe anlegen</h2>
+
+<form class="uk-form-horizontal" method="post" action="/daten/gruppe/add">
+	<div class="uk-margin">
+		<label class="uk-form-label" for="form-name">Gruppenanme:</label>
+		<div class="uk-form-controls">
+			<input class="uk-input" id="form-name" type="text" name="name">
+		</div>
+	</div>
+
+	<input type="submit" value="Gruppe speichern">
+</form>
+
+{{end}}

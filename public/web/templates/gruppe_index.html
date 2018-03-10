@@ -1,0 +1,10 @@
+{{define "content"}}
+<h2>Gruppen</h2>
+<a href="/daten/gruppe/add">Neue Gruppe hinzufügen</a>
+
+<ul class="uk-list uk-list-line">
+	{{range $i, $e := .Gruppe }}
+	<li>{{$i}}. {{$e.Name}} <a href="/daten/gruppe/delete/{{$e.ID}}">Gruppe löschen</a>
+	{{end}}
+</ul>
+{{end}}

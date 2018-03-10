@@ -58,8 +58,9 @@ func main() {
 	ps := &sql.PersonProvider{DB: db}
 	ls := &sql.LiedProvider{DB: db}
 	vs := &sql.VerlagProvider{DB: db}
+	gs := &sql.GruppenProvider{DB: db}
 
-	websrvc, _ := web.New(cfg.Httpd, ps, ls, vs)
+	websrvc, _ := web.New(cfg.Httpd, ps, ls, vs, gs)
 	manager.Add(websrvc)
 
 	manager.Start()

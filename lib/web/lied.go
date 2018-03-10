@@ -34,22 +34,28 @@ func (h *LiedHandler) Index(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	t, err := h.render.LoadTemplate("base", "lied_index")
-	if err != nil {
-		log.Printf("could not load templeate: %v\n", err)
-		return
-	}
-
 	data := struct {
 		Lied []*gj.Lied
 	}{
 		Lied: l,
 	}
 
-	t.Execute(w, &data)
+	err = h.render.Render("base", "lied_index", w, &data)
+	if err != nil {
+		log.Printf("error while executing template: %v\n", err)
+		return
+	}
 }
 
 func (h *LiedHandler) Create(w http.ResponseWriter, r *http.Request) {
+	err := h.render.Render("base", "lied_create", w, nil)
+	if err != nil {
+		log.Printf("error while executing template: %v\n", err)
+		return
+	}
+}
+
+func (h *LiedHandler) CreatePOST(w http.ResponseWriter, r *http.Request) {
 	v := r.Form
 	var l gj.Lied
 	var err error
@@ -99,12 +105,6 @@ func (h *LiedHandler) Show(w http.ResponseWriter, id int) {
 		return
 	}
 
-	t, err := h.render.LoadTemplate("base", "lied_show")
-	if err != nil {
-		log.Printf("error while parsing template")
-		return
-	}
-
 	var komponist, text, arrangeur *gj.Person
 	var verlag *gj.Verlag
 
@@ -146,19 +146,17 @@ func (h *LiedHandler) Show(w http.ResponseWriter, id int) {
 		Verlag:    verlag,
 	}
 
-	t.Execute(w, &data)
+	err = h.render.Render("base", "lied_show", w, &data)
+	if err != nil {
+		log.Printf("error while parsing template")
+		return
+	}
 }
 
-func (h *LiedHandler) DeleteGET(w http.ResponseWriter, id int) {
+func (h *LiedHandler) Delete(w http.ResponseWriter, id int) {
 	l, err := h.liedProvider.Get(id)
 	if err != nil {
 		log.Printf("error while getting lied: %v\n", err)
-		return
-	}
-
-	t, err := h.render.LoadTemplate("base", "lied_delete")
-	if err != nil {
-		log.Printf("error while parsing template")
 		return
 	}
 
@@ -168,7 +166,11 @@ func (h *LiedHandler) DeleteGET(w http.ResponseWriter, id int) {
 		Lied: l,
 	}
 
-	t.Execute(w, &data)
+	err = h.render.Render("base", "lied_delete", w, &data)
+	if err != nil {
+		log.Printf("error while parsing template")
+		return
+	}
 }
 
 func (h *LiedHandler) DeletePOST(w http.ResponseWriter, r *http.Request) {

@@ -3,7 +3,15 @@
     <a href="/lied/add">Neues Lied hinzufügen</a>
     <ul class="uk-list uk-list-line">
     {{ range $i, $e := .Lied}}
-    	<li><a href="/lied/show/{{$e.ID}}">{{$e.Title}}</a></li>
+    	<li>
+		{{$i}}.
+		<a href="/lied/show/{{$e.ID}}">
+			{{$e.Titel}}
+		</a>
+		{{ if $e.Untertitel }}
+			( {{ $e.Untertitel }} )
+		{{ end }}
+	</li>
     {{end}}
     </ul>
 {{end}}

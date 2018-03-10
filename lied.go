@@ -7,15 +7,15 @@ var (
 )
 
 type Lied struct {
-	ID         int
-	Titel      string
-	Untertitel string
-	Jahr       int
+	ID         int    `sql:"id"`
+	Titel      string `sql:"titel"`
+	Untertitel string `sql:"untertitel"`
+	Jahr       int    `sql:"jahr"`
 	// TODO: make a slice with komponist, text and arrangeur
-	KomponistID int
-	TextID      int
-	ArrangeurID int
-	VerlagID    int
+	KomponistID int `sql:"komponist_id"`
+	TextID      int `sql:"text_id"`
+	ArrangeurID int `sql:"arrangeur_id"`
+	VerlagID    int `sql:"verlag_id"`
 }
 
 type LiedService interface {

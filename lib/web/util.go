@@ -19,19 +19,8 @@ func parseForm(fn func(http.ResponseWriter, *http.Request)) func(http.ResponseWr
 	}
 }
 
-func plainTemplate(name string, render *Renderer) func(http.ResponseWriter, *http.Request) {
-	return func(w http.ResponseWriter, r *http.Request) {
-		t, err := render.LoadTemplate("base", name)
-		if err != nil {
-			log.Printf("Could not parse template %s: %v\n", name, err)
-			return
-		}
-
-		t.Execute(w, nil)
-	}
-}
-
 func parseID(fn func(http.ResponseWriter, int), path string) func(http.ResponseWriter, *http.Request) {
+	log.Printf("parseID: %s\n", path)
 	return func(w http.ResponseWriter, r *http.Request) {
 		p := strings.Replace(r.URL.Path, path, "", 1)
 

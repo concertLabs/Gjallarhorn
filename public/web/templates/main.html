@@ -1,0 +1,58 @@
+{{define "header"}}
+<!DOCTYPE html>
+<html>
+	<head>
+		<title></title>
+		<link rel="stylesheet" href="/static/css/uikit.min.css" />
+		<script src="/static/js/jquery.min.js"></script>
+		<script src="/static/js/uikit.min.js"></script>
+		<script src="/static/js/uikit-icon.min.js"></script>
+	</head>
+	<body>
+		<div class="uk-container">
+			<div class="uk-navbar-container" uk-navbar>
+				<div class="uk-navbar-left">
+					<ul class="uk-navbar-nav">
+						<li><a href="/">Home</a></li>
+						<li>
+							<a href="/lied">Lieder</a>
+							<div class="uk-navbar-dropdown">
+								<ul class="uk-nav uk-navbar-dropdown-nav">
+									<li><a href="/lied/add">Hinzufügen</a></li>
+									<li><a href="/">Suchen</a></li>
+									<li><a href="/">Anzeigen</a></li>
+								</ul>
+							</div>
+						</li>
+						<li><a href="/">Repertoire</a></li>
+						<li><a href="/">Warteschlange</a></li>
+						<li>
+							<a href="/person">Personen</a>
+							<div class="uk-navbar-dropdown">
+								<ul class="uk-nav uk-navbar-dropdown-nav">
+									<li><a href="/perosn/add">Hinzufügen</a></li>
+									<li><a href="/person">Anzeigen</a></li>
+								</ul>
+							</div>
+						</li>
+
+						<li>
+							<a href="/daten">Stammdaten</a>
+							<div class="uk-navbar-dropdown">
+								<ul class="uk-nav uk-navbar-dropdown-nav">
+									<li><a href="/daten/gruppe">Gruppenverwaltung</a></li>
+								</ul>
+							</div>
+						</li>
+					</ul>
+				</div>
+			</div>
+{{end}}
+
+{{define "footer"}}
+		</div>
+	</body>
+</html>
+{{end}}
+
+

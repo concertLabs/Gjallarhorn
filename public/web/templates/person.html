@@ -1,4 +1,21 @@
-{{define "content"}}
+{{define "person_index"}}
+	{{template "header"}}
+
+	<h2>Personen</h2>
+	<a href="/person/add">Neue Person hinzufügen</a>
+	
+	<ul class="uk-list uk-list-line">
+		{{ range $i, $e := .Person }}
+		<li>{{$i}}. {{$e.Surname}} {{ $e.Name }} <a href="/person/show/{{$e.ID}}">Anzeigen</a></li>
+		{{end}}
+	</ul>
+
+	{{template "footer"}}
+{{end}}
+
+{{define "person_create"}}
+	{{template "header" }}
+
 	<h2>Neue Person hinzufügen</h2>
 
 	<form class="uk-form-horizontal" method="post" action="/person/add">
@@ -59,4 +76,43 @@
 
 		<input type="submit" value="Abschicken">
 	</form>
+
+	{{template "footer}}
+{{end}}
+
+{{define "person_show"}}
+	{{template "header"}}
+
+	<h2>{{.Person.Name}}, {{.Person.Surname}}</h2>
+	
+	<ul>
+		<li>Name: {{.Person.Name}}</li>
+		<li>Vorname: {{.Person.Surname}}</li>
+		<li>Strasse: {{.Person.Street}}</li>
+		<li>PLZ: {{.Person.Zipcode}}</li>
+		<li>Ort: {{.Person.City}}</li>
+		<li>Geburtstag: {{.Person.BirthDate}}</li>
+		<li>Mitglied seit: {{.Person.MemberSince}}</li>
+		<li>Geburtstag: {{.Person.BirthDate}}</li>
+		<li>Email: {{.Person.Email}}</li>
+	</ul>
+	
+	<a href="/person/delete/{{.Person.ID}}">Person löschen</a>
+
+	{{template "footer"}}
+{{end}}
+
+{{define "person_delete"}}
+	{{template "header"}}
+	<h2>Warnung!</h2>
+
+	Möchten Sie wirklich {{.Person.Name}}, {{.Person.Surname}} löschen?
+	<form class="uk-form-horizontal" method="post" action="/person/delete/{{.Person.ID}}">
+		<input type="hidden" name="delete" value="ok">
+		<input type="submit" value="Person löschen">	
+	</form>
+
+	<a href="/person">Zurück zur Personenliste</a>
+
+	{{template "footer"}}
 {{end}}

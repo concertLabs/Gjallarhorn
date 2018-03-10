@@ -27,9 +27,10 @@ type App struct {
 	Renderer *Renderer
 
 	// Handler with Routes
-	IndexHandler  *IndexHandler
-	PersonHandler *PersonHandler
-	LiedHandler   *LiedHandler
+	IndexHandler   *IndexHandler
+	PersonHandler  *PersonHandler
+	LiedHandler    *LiedHandler
+	GruppenHandler *GruppenHandler
 	// VerlagHandler *VerlagHandler
 }
 
@@ -38,7 +39,9 @@ func New(
 	cfg config.HttpdConfig,
 	ps gjallarhorn.PersonService,
 	ls gjallarhorn.LiedService,
-	vs gjallarhorn.VerlagService) (*App, error) {
+	vs gjallarhorn.VerlagService,
+	gs gjallarhorn.GruppenService,
+) (*App, error) {
 
 	app := &App{
 		Host:     cfg.Host,
@@ -57,6 +60,7 @@ func New(
 	app.IndexHandler = NewIndexHandler(app.Renderer)
 	app.PersonHandler = NewPersonHandler(ps, app.Renderer)
 	app.LiedHandler = NewLiedHandler(ls, ps, vs, app.Renderer)
+	app.GruppenHandler = NewGruppenHandler(gs, app.Renderer)
 	// app.VerlagHandler = NewVerlagHandler(vs, app.Renderer)
 
 	err := app.addHandlers()
@@ -82,25 +86,32 @@ func (a App) Run() {
 }
 
 func (a App) addHandlers() error {
-	// NOTE: there will never be returned an error, might change func signature
 	// TODO: there needs to be a huuge refactoring
 	// we need a seperate api path for all this stuff
 
 	// create each handler
 	a.Mux.HandleFunc("/", a.IndexHandler.Index).Methods("GET")
-	a.Mux.HandleFunc("/person", a.PersonHandler.Index).Methods("GET") // show all
-	// a.Mux.HandleFunc("/person/add", a.PersonHandler.CreateGET).Methods("GET")         // add new
-	a.Mux.HandleFunc("/person/add", plainTemplate("person_create", a.Renderer)).Methods("GET")                  // add new
-	a.Mux.HandleFunc("/person/add", parseForm(a.PersonHandler.Create)).Methods("POST")                          // add new
+
+	a.Mux.HandleFunc("/person", a.PersonHandler.Index).Methods("GET")                                           // show all
+	a.Mux.HandleFunc("/person/add", a.PersonHandler.Create).Methods("GET")                                      // add new
+	a.Mux.HandleFunc("/person/add", parseForm(a.PersonHandler.CreatePOST)).Methods("POST")                      // add new
 	a.Mux.HandleFunc("/person/show/{id:[0-9]+}", parseID(a.PersonHandler.Show, "/person/show/")).Methods("GET") // show a single person
-	a.Mux.HandleFunc("/person/delete/{id:[0-9]+}", parseID(a.PersonHandler.DeleteGET, "/person/delete/")).Methods("GET")
+	a.Mux.HandleFunc("/person/delete/{id:[0-9]+}", parseID(a.PersonHandler.Delete, "/person/delete/")).Methods("GET")
 	a.Mux.HandleFunc("/person/delete/{id:[0-9]+}", a.PersonHandler.DeletePOST).Methods("POST")
 
 	a.Mux.HandleFunc("/lied", a.LiedHandler.Index).Methods("GET")
-	a.Mux.HandleFunc("/lied/add", plainTemplate("lied_create", a.Renderer)).Methods("GET")
-	a.Mux.HandleFunc("/lied/add", parseForm(a.LiedHandler.Create)).Methods("POST")
+	a.Mux.HandleFunc("/lied/add", a.LiedHandler.Create).Methods("GET")
+	a.Mux.HandleFunc("/lied/add", parseForm(a.LiedHandler.CreatePOST)).Methods("POST")
+	a.Mux.HandleFunc("/lied/show/{id:[0-9]+}", parseID(a.LiedHandler.Show, "/lied/show/")).Methods("GET")
+	a.Mux.HandleFunc("/lied/delete/{id:[0-9]+}", parseID(a.LiedHandler.Delete, "/lied/delete/")).Methods("GET")
+	a.Mux.HandleFunc("/lied/delete/{id:[0-9]+}", a.LiedHandler.DeletePOST).Methods("POST")
 
-	// just static stuff, for reading
+	a.Mux.HandleFunc("/daten/gruppe", a.GruppenHandler.Index).Methods("GET") // main Gruppen details
+	a.Mux.HandleFunc("/daten/gruppe/add", a.GruppenHandler.Create).Methods("GET")
+	a.Mux.HandleFunc("/daten/gruppe/add", a.GruppenHandler.CreatePOST).Methods("POST")
+	a.Mux.HandleFunc("/daten/gruppe/delete/{id:[0-9]+}", parseID(a.GruppenHandler.Delete, "/daten/gruppe/delete/")).Methods("GET")
+	a.Mux.HandleFunc("/daten/gruppe/delete/{id:[0-9]+}", a.GruppenHandler.DeletePOST).Methods("POST")
+
 	pp := a.Mux.PathPrefix("/static/")
 	fs := http.FileServer(http.Dir(a.AssetDir + "/static/"))
 	pp.Handler(http.StripPrefix("/static/", fs)) // ? how does that work again o.O

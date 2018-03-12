@@ -1,4 +1,28 @@
-{{define "content"}}
+{{define "lied_index"}}
+	{{template "header"}}
+
+	<h2>Liste aller vorhandenen Lieder</h2>
+	<a href="/lied/add">Neues Lied hinzufügen</a>
+	<ul class="uk-list uk-list-line">
+		{{ range $i, $e := .Lied}}
+		<li>
+			{{$i}}.
+			<a href="/lied/show/{{$e.ID}}">
+				{{$e.Titel}}
+			</a>
+			{{ if $e.Untertitel }}
+			( {{ $e.Untertitel }} )
+			{{ end }}
+		</li>
+		{{end}}
+	</ul>
+
+	{{template "footer"}}
+{{end}}
+
+
+{{define "lied_create"}}
+	{{template "header"}}
 	<h2>Neues Lied hinzufügen</h2>
 
 	<form class="uk-form-horizontal" method="post" action="/lied/add">
@@ -54,4 +78,42 @@
 	
 		<input type="submit" value="Abschicken">
 	</form>
+	{{template "footer"}}
+{{end}}
+
+{{define "lied_show"}}
+	{{template "header"}}
+	<h2>{{.Lied.Titel}}</h2>
+
+	<ul>
+		<li>Titel: {{.Lied.Titel}}</li>
+		<li>Untertitel: {{.Lied.Untertitel}}</li>
+		<li>Jahr: {{.Lied.Jahr}}</li>
+		<li>Komponist: {{.Komponist.Name}}, {{.Komponist.Surname}}</li>
+		<li>Text: {{.Text.Name}}, {{.Text.Surname}}</li>
+		<li>Arrangeur: {{.Arrangeur.Name}}, {{.Arrangeur.Surname}}</li>
+		<li>Verlag: {{.Verlag.Name}}</li>
+	</ul>
+
+	<a href="/lied/delete/{{.Lied.ID}}">Lied löschen</a>
+	{{template "footer"}}
+{{end}}
+
+{{define "lied_edit"}}
+	{{template "header"}}
+	{{template "footer"}}
+{{end}}
+
+{{define "lied_delete"}}
+	{{template "header"}}
+	<h2>Warnung!</h2>
+
+	Möchten Sie wirklich {{.Lied.Titel}} löschen?
+	<form class="uk-form-horizontal" method="post" action="/lied/delete/{{.Lied.ID}}">
+		<input type="hidden" name="delete" value="ok">
+		<input type="submit" value="Lied löschen">	
+	</form>
+
+	<a href="/lied">Zurück zur Liederliste</a>
+	{{template "footer"}}
 {{end}}

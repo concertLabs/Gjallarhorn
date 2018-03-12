@@ -39,7 +39,7 @@ func (h *PersonHandler) Index(w http.ResponseWriter, r *http.Request) {
 		Person: p,
 	}
 
-	err = h.render.Render("base", "person_index", w, &data)
+	err = h.render.Render("person_index", "person", w, &data)
 	if err != nil {
 		log.Printf("error while parsing template: %v\n", err)
 		return

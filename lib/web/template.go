@@ -23,7 +23,7 @@ func (p *Renderer) loadTemplate(name, file string) error {
 	if !strings.HasSuffix(file, ".html") {
 		file += ".html"
 	}
-	basefile := path.Join(p.AssetDir, "templates", "_base.html")
+	basefile := path.Join(p.AssetDir, "templates", "main.html")
 	tempfile := path.Join(p.AssetDir, "templates", file)
 
 	// Maybe we can cache this
@@ -43,7 +43,8 @@ func (p *Renderer) Render(name, file string, w io.Writer, data interface{}) erro
 		log.Printf("error while loading template %s: %v\n", file, err)
 		return err
 	}
-	err = p.T.Execute(w, data)
+	err = p.T.ExecuteTemplate(w, name, data)
+	// err = p.T.Execute(w, data)
 	if err != nil {
 		log.Printf("error while rendering %s: %v\n", p.T.Name(), err)
 	}

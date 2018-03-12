@@ -14,7 +14,7 @@ func NewIndexHandler(_render *Renderer) *IndexHandler {
 }
 
 func (h *IndexHandler) Index(w http.ResponseWriter, r *http.Request) {
-	err := h.render.Render("base", "index", w, nil)
+	err := h.render.Render("index_index", "index", w, nil)
 	if err != nil {
 		log.Printf("error while parsing template: %v\n", err)
 		return

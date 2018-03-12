@@ -40,7 +40,7 @@ func (h *LiedHandler) Index(w http.ResponseWriter, r *http.Request) {
 		Lied: l,
 	}
 
-	err = h.render.Render("base", "lied_index", w, &data)
+	err = h.render.Render("lied_index", "lied", w, &data)
 	if err != nil {
 		log.Printf("error while executing template: %v\n", err)
 		return
@@ -48,7 +48,7 @@ func (h *LiedHandler) Index(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *LiedHandler) Create(w http.ResponseWriter, r *http.Request) {
-	err := h.render.Render("base", "lied_create", w, nil)
+	err := h.render.Render("lied_create", "lied", w, nil)
 	if err != nil {
 		log.Printf("error while executing template: %v\n", err)
 		return
@@ -146,7 +146,7 @@ func (h *LiedHandler) Show(w http.ResponseWriter, id int) {
 		Verlag:    verlag,
 	}
 
-	err = h.render.Render("base", "lied_show", w, &data)
+	err = h.render.Render("lied_show", "lied", w, &data)
 	if err != nil {
 		log.Printf("error while parsing template")
 		return
@@ -166,7 +166,7 @@ func (h *LiedHandler) Delete(w http.ResponseWriter, id int) {
 		Lied: l,
 	}
 
-	err = h.render.Render("base", "lied_delete", w, &data)
+	err = h.render.Render("lied_delete", "lied", w, &data)
 	if err != nil {
 		log.Printf("error while parsing template")
 		return

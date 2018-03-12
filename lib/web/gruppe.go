@@ -35,11 +35,11 @@ func (h *GruppenHandler) Index(w http.ResponseWriter, r *http.Request) {
 		Gruppe: g,
 	}
 
-	h.render.Render("base", "gruppe_index", w, &data)
+	h.render.Render("gruppe_index", "gruppe", w, &data)
 }
 
 func (h *GruppenHandler) Create(w http.ResponseWriter, r *http.Request) {
-	err := h.render.Render("base", "gruppe_create", w, nil)
+	err := h.render.Render("gruppe_create", "gruppe", w, nil)
 	if err != nil {
 		log.Printf("error while executing template: %v\n", err)
 		return
@@ -73,7 +73,7 @@ func (h *GruppenHandler) Delete(w http.ResponseWriter, id int) {
 		Gruppe: g,
 	}
 
-	err = h.render.Render("base", "gruppe_delete", w, &data)
+	err = h.render.Render("gruppe_delete", "gruppe", w, &data)
 	if err != nil {
 		log.Printf("error while parsing template: %v\n", err)
 		return

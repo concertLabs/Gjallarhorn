@@ -15,7 +15,7 @@ type VerlagHandler struct {
 	verlagProvider gj.VerlagService
 }
 
-func NewVerlagHandler(v gj.VerlagService, r *Renderer) {
+func NewVerlagHandler(v gj.VerlagService, r *Renderer) *VerlagHandler {
 	return &VerlagHandler{
 		render:         r,
 		verlagProvider: v,
@@ -35,7 +35,7 @@ func (h *VerlagHandler) Index(w http.ResponseWriter, r *http.Request) {
 		Verlag: v,
 	}
 
-	err = h.render.Render("base", "verlag_index", w, &data)
+	err = h.render.Render("verlag_index", "verlag", w, &data)
 	if err != nil {
 		log.Printf("could not execute template: %v\n", err)
 		return
@@ -43,7 +43,7 @@ func (h *VerlagHandler) Index(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *VerlagHandler) Create(w http.ResponseWriter, r *http.Request) {
-	err := h.render.Render("base", "verlag_create", w, nil)
+	err := h.render.Render("verlag_create", "verlag", w, nil)
 	if err != nil {
 		log.Printf("error while parsing template: %v\n", err)
 		return
@@ -55,7 +55,6 @@ func (h *VerlagHandler) CreatePOST(w http.ResponseWriter, r *http.Request) {
 	var err error
 
 	// assign values from form
-	panic("scan is not implemented")
 
 	err = h.verlagProvider.Create(&v)
 	if err != nil {
@@ -66,8 +65,8 @@ func (h *VerlagHandler) CreatePOST(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/daten/verlag/", 301)
 }
 
-func (h *VerlagHandler) Show(w http.ResponseWriter, r *http.Request) {
-	v, err := l.verlagProvider.Get(id)
+func (h *VerlagHandler) Show(w http.ResponseWriter, id int) {
+	v, err := h.verlagProvider.Get(id)
 	if err != nil {
 		log.Printf("error while getting verlag: %v\n", err)
 		return
@@ -81,7 +80,7 @@ func (h *VerlagHandler) Show(w http.ResponseWriter, r *http.Request) {
 		Verlag: v,
 	}
 
-	err = h.render.Render("base", "verlag_show", w, &data)
+	err = h.render.Render("verlag_show", "verlag", w, &data)
 	if err != nil {
 		log.Printf("error while parsing template")
 		return
@@ -101,7 +100,7 @@ func (h *VerlagHandler) Delete(w http.ResponseWriter, id int) {
 		Verlag: v,
 	}
 
-	err = h.render.Render("base", "verlag_delete", w, &data)
+	err = h.render.Render("verlag_delete", "verlag", w, &data)
 	if err != nil {
 		log.Printf("error while parsing template")
 		return
@@ -128,7 +127,7 @@ func (h *VerlagHandler) DeletePOST(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = h.verlag.Provider.Delete(id)
+	err = h.verlagProvider.Delete(id)
 	if err != nil {
 		log.Printf("could not delete verlag from db: %v\n", err)
 		return

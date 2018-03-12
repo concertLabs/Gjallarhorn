@@ -1,0 +1,32 @@
+{{define "verlag_index"}}
+	{{template "header"}}
+	<h2>Übersicht der Musikverlage</h2>
+	{{template "footer"}}
+{{end}}
+
+{{define "verlag_create"}}
+	{{template "header"}}
+	<h2>Neuen Verlag hinzufügen</h2>
+
+	{{template "footer"}}
+{{end}}
+
+{{define "verlag_show"}}
+	{{template "header"}}
+	<h2>Verlag: {{.Name}}</h2>
+	{{template "footer"}}
+{{end}}
+
+{{define "verlag_edit"}}
+	{{template "header"}}
+
+	{{template "footer"}}
+{{end}}
+
+{{define "verlag_delete"}}
+	{{template "header"}}
+	<h2>Warnung!</h2>
+
+	{{template "footer"}}
+{{end}}
+

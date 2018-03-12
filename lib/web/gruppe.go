@@ -9,6 +9,7 @@ import (
 	gj "github.com/quiteawful/Gjallarhorn"
 )
 
+// GruppenHandler manages our main groupable stuff
 type GruppenHandler struct {
 	render          *Renderer
 	gruppenProvider gj.GruppenService

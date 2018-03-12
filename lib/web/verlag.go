@@ -7,35 +7,37 @@ import (
 	"strconv"
 	"strings"
 
-	gj "github.com/quiteawful/Gjallarhorn"
+	"github.com/jinzhu/gorm"
+	"github.com/quiteawful/Gjallarhorn/lib/db"
 )
 
 type VerlagHandler struct {
-	render         *Renderer
-	verlagProvider gj.VerlagService
+	render *Renderer
+	db     *gorm.DB
 }
 
-func NewVerlagHandler(v gj.VerlagService, r *Renderer) *VerlagHandler {
+func NewVerlagHandler(_db *gorm.DB, r *Renderer) *VerlagHandler {
 	return &VerlagHandler{
-		render:         r,
-		verlagProvider: v,
+		db:     _db,
+		render: r,
 	}
 }
 
 func (h *VerlagHandler) Index(w http.ResponseWriter, r *http.Request) {
-	v, err := h.verlagProvider.GetAll()
-	if err != nil {
-		log.Printf("could not retreive all verlag: %v\n", err)
+	var v []db.Verlag
+
+	if err := h.db.Find(&v).Error; err != nil {
+		log.Printf("error while getting all verläge: %v\n", err)
 		return
 	}
 
 	data := struct {
-		Verlag []*gj.Verlag
+		Verlag []db.Verlag
 	}{
 		Verlag: v,
 	}
 
-	err = h.render.Render("verlag_index", "verlag", w, &data)
+	err := h.render.Render("verlag_index", "verlag", w, &data)
 	if err != nil {
 		log.Printf("could not execute template: %v\n", err)
 		return
@@ -51,56 +53,63 @@ func (h *VerlagHandler) Create(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *VerlagHandler) CreatePOST(w http.ResponseWriter, r *http.Request) {
-	var v gj.Verlag
-	var err error
+	var v db.Verlag
 
-	// assign values from form
+	v.Name = r.Form.Get("name")
+	v.Strasse = r.Form.Get("street")
+	v.PLZ = r.Form.Get("zipcode")
+	v.Ort = r.Form.Get("city")
 
-	err = h.verlagProvider.Create(&v)
-	if err != nil {
-		log.Printf("could not create new verlag: %v\n", err)
+	if err := h.db.Create(&v).Error; err != nil {
+		log.Printf("error while creating new verlag: %v\n", err)
 		return
 	}
 
-	http.Redirect(w, r, "/daten/verlag/", 301)
+	http.Redirect(w, r, "/verlag", 301)
 }
 
-func (h *VerlagHandler) Show(w http.ResponseWriter, id int) {
-	v, err := h.verlagProvider.Get(id)
-	if err != nil {
-		log.Printf("error while getting verlag: %v\n", err)
+func (h *VerlagHandler) Show(w http.ResponseWriter, id uint) {
+	var v db.Verlag
+	if err := h.db.First(&v, id).Error; err != nil {
+		log.Printf("error while getting verlag %d: %v\n", id, err)
 		return
 	}
 
-	// maybe get other providers
-
-	data := struct {
-		Verlag *gj.Verlag
-	}{
-		Verlag: v,
+	var l []db.Lied
+	if err := h.db.Where("verlag_id = ?", v.ID).Find(&l).Error; err != nil {
+		log.Printf("error while getting lieder from verlag: %v\n", err)
+		// maaaay return
 	}
 
-	err = h.render.Render("verlag_show", "verlag", w, &data)
+	data := struct {
+		Verlag *db.Verlag
+		Lieder []db.Lied
+	}{
+		Verlag: &v,
+		Lieder: l,
+	}
+
+	err := h.render.Render("verlag_show", "verlag", w, &data)
 	if err != nil {
 		log.Printf("error while parsing template")
 		return
 	}
 }
 
-func (h *VerlagHandler) Delete(w http.ResponseWriter, id int) {
-	v, err := h.verlagProvider.Get(id)
-	if err != nil {
-		log.Printf("error while deleting verlag: %v\n", err)
+func (h *VerlagHandler) Delete(w http.ResponseWriter, id uint) {
+	var v db.Verlag
+	if err := h.db.First(&v, id).Error; err != nil {
+		log.Printf("error while getting verlag %d: %v\n", id, err)
 		return
 	}
 
 	data := struct {
-		Verlag *gj.Verlag
+		Verlag *db.Verlag
 	}{
-		Verlag: v,
+		Verlag: &v,
 	}
 
-	err = h.render.Render("verlag_delete", "verlag", w, &data)
+	err := h.render.Render("verlag_delete", "verlag", w, &data)
 	if err != nil {
 		log.Printf("error while parsing template")
 		return
@@ -127,9 +136,11 @@ func (h *VerlagHandler) DeletePOST(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = h.verlagProvider.Delete(id)
-	if err != nil {
-		log.Printf("could not delete verlag from db: %v\n", err)
+	var v db.Verlag
+	v.ID = uint(id)
+
+	if err = h.db.Delete(&v).Error; err != nil {
+		log.Printf("error while deleting verlag: %v\n", err)
 		return
 	}
 

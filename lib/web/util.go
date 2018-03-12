@@ -19,7 +19,7 @@ func parseForm(fn func(http.ResponseWriter, *http.Request)) func(http.ResponseWr
 	}
 }
 
-func parseID(fn func(http.ResponseWriter, int), path string) func(http.ResponseWriter, *http.Request) {
+func parseID(fn func(http.ResponseWriter, uint), path string) func(http.ResponseWriter, *http.Request) {
 	log.Printf("parseID: %s\n", path)
 	return func(w http.ResponseWriter, r *http.Request) {
 		p := strings.Replace(r.URL.Path, path, "", 1)
@@ -30,6 +30,6 @@ func parseID(fn func(http.ResponseWriter, int), path string) func(http.ResponseW
 			return
 		}
 
-		fn(w, id)
+		fn(w, uint(id))
 	}
 }

@@ -7,7 +7,6 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/jinzhu/gorm"
-	gjallarhorn "github.com/quiteawful/Gjallarhorn"
 	"github.com/quiteawful/Gjallarhorn/lib/config"
 )
 
@@ -38,14 +37,7 @@ type App struct {
 }
 
 // New creates a new web App based on the main config
-func New(
-	cfg config.HttpdConfig,
-	_db *gorm.DB,
-	ps gjallarhorn.PersonService,
-	ls gjallarhorn.LiedService,
-	vs gjallarhorn.VerlagService,
-	gs gjallarhorn.GruppenService,
-) (*App, error) {
+func New(cfg config.HttpdConfig, _db *gorm.DB) (*App, error) {
 
 	app := &App{
 		Host:     cfg.Host,
@@ -62,11 +54,11 @@ func New(
 		db:       _db,
 	}
 
-	app.IndexHandler = NewIndexHandler(app.Renderer)
-	app.PersonHandler = NewPersonHandler(ps, app.Renderer)
-	app.LiedHandler = NewLiedHandler(ls, ps, vs, app.Renderer)
-	app.GruppenHandler = NewGruppenHandler(gs, app.Renderer)
-	app.VerlagHandler = NewVerlagHandler(vs, app.Renderer)
+	app.IndexHandler = NewIndexHandler(app.db, app.Renderer)
+	app.PersonHandler = NewPersonHandler(app.db, app.Renderer)
+	app.LiedHandler = NewLiedHandler(app.db, app.Renderer)
+	app.GruppenHandler = NewGruppenHandler(app.db, app.Renderer)
+	app.VerlagHandler = NewVerlagHandler(app.db, app.Renderer)
 
 	err := app.addHandlers()
 	if err != nil {
@@ -114,13 +106,14 @@ func (a App) addHandlers() error {
 	a.Mux.HandleFunc("/gruppe", a.GruppenHandler.Index).Methods("GET")
 	a.Mux.HandleFunc("/gruppe/add", a.GruppenHandler.Create).Methods("GET")
 	a.Mux.HandleFunc("/gruppe/add", a.GruppenHandler.CreatePOST).Methods("POST")
+	a.Mux.HandleFunc("/gruppe/show/{id:[0-9]+}", parseID(a.GruppenHandler.Show, "/gruppe/show/")).Methods("GET")
 	a.Mux.HandleFunc("/gruppe/delete/{id:[0-9]+}", parseID(a.GruppenHandler.Delete, "/gruppe/delete/")).Methods("GET")
 	a.Mux.HandleFunc("/gruppe/delete/{id:[0-9]+}", a.GruppenHandler.DeletePOST).Methods("POST")
 
 	a.Mux.HandleFunc("/verlag", a.VerlagHandler.Index).Methods("GET")
 	a.Mux.HandleFunc("/verlag/add", a.VerlagHandler.Create).Methods("GET")
 	a.Mux.HandleFunc("/verlag/add", parseForm(a.VerlagHandler.CreatePOST)).Methods("POST")
-	a.Mux.HandleFunc("/verlag/show/{id:[0-9]+}", parseID(a.VerlagHandler.Show, "/verlag/delete/")).Methods("GET")
+	a.Mux.HandleFunc("/verlag/show/{id:[0-9]+}", parseID(a.VerlagHandler.Show, "/verlag/show/")).Methods("GET")
 	a.Mux.HandleFunc("/verlag/delete/{id:[0-9]+}", parseID(a.VerlagHandler.Delete, "/verlag/delete/")).Methods("GET")
 	a.Mux.HandleFunc("/verlag/delete/{id:[0-9]+}", a.VerlagHandler.DeletePOST).Methods("POST")
 

@@ -51,28 +51,48 @@
 		<div class="uk-margin">
 			<label class="uk-form-label" for="form-komponist">Komponist:</label>
 			<div class="uk-form-controls">
-				<input class="uk-input" id="form-komponist" type="text" name="komponist">
+				<select class="uk-select" id="form-komponist" name="komponist">
+					<option value="0"></option>
+					{{range $v := .Personen}}
+					<option value="{{$v.ID}}">{{$v.Name}}, {{$v.Vorname}}</option>
+					{{end}}
+				</select>
 			</div>
 		</div>
 
 		<div class="uk-margin">
-			<label class="uk-form-label" for="form-text">Text von :</label>
+			<label class="uk-form-label" for="form-texter">Texter:</label>
 			<div class="uk-form-controls">
-				<input class="uk-input" id="form-text" type="text" name="text">
+				<select class="uk-select" id="form-texter" name="texter">
+					<option value="0"></option>
+					{{range  $v := .Personen}}
+					<option value="{{$v.ID}}">{{$v.Name}}, {{$v.Vorname}}</option>
+					{{end}}
+				</select>
 			</div>
 		</div>
 
 		<div class="uk-margin">
 			<label class="uk-form-label" for="form-arrangeur">Arrangeur:</label>
 			<div class="uk-form-controls">
-				<input class="uk-input" id="form-arrangeur" type="text" name="arrangeur">
+				<select class="uk-select" id="form-arrangeur" name="arrangeur">
+					<option value="0"></option>
+					{{range  $v := .Personen}}
+					<option value="{{$v.ID}}">{{$v.Name}}, {{$v.Vorname}}</option>
+					{{end}}
+				</select>
 			</div>
 		</div>
 
 		<div class="uk-margin">
 			<label class="uk-form-label" for="form-verlag">Verlag:</label>
 			<div class="uk-form-controls">
-				<input class="uk-input" id="form-verlag" type="text" name="verlag">
+				<select class="uk-select" id="form-verlag" name="verlag">
+					<option value="0"></option>
+					{{range  $v := .Verlag}}
+					<option value="{{$v.ID}}">{{$v.Name}}</option>
+					{{end}}
+				</select>
 			</div>
 		</div>
 	
@@ -89,10 +109,10 @@
 		<li>Titel: {{.Lied.Titel}}</li>
 		<li>Untertitel: {{.Lied.Untertitel}}</li>
 		<li>Jahr: {{.Lied.Jahr}}</li>
-		<li>Komponist: {{.Komponist.Name}}, {{.Komponist.Surname}}</li>
-		<li>Text: {{.Text.Name}}, {{.Text.Surname}}</li>
-		<li>Arrangeur: {{.Arrangeur.Name}}, {{.Arrangeur.Surname}}</li>
-		<li>Verlag: {{.Verlag.Name}}</li>
+		<li>Komponist: <a href="/person/show/{{.Komponist.ID}}">{{.Komponist.Name}}, {{.Komponist.Vorname}}</a></li>
+		<li>Text: <a href="/person/show/{{.Text.ID}}">{{.Text.Name}}, {{.Text.Vorname}}</a></li>
+		<li>Arrangeur: <a href="/person/show/{{.Arrangeur.ID}}">{{.Arrangeur.Name}}, {{.Arrangeur.Vorname}}</a></li>
+		<li>Verlag: <a href="/verlag/show/{{.Verlag.ID}}">{{.Verlag.Name}}</a></li>
 	</ul>
 
 	<a href="/lied/delete/{{.Lied.ID}}">Lied löschen</a>

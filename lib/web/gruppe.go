@@ -6,31 +6,33 @@ import (
 	"strconv"
 	"strings"
 
-	gj "github.com/quiteawful/Gjallarhorn"
+	"github.com/jinzhu/gorm"
+	"github.com/quiteawful/Gjallarhorn/lib/db"
 )
 
 // GruppenHandler manages our main groupable stuff
 type GruppenHandler struct {
-	render          *Renderer
-	gruppenProvider gj.GruppenService
+	render *Renderer
+	db     *gorm.DB
 }
 
-func NewGruppenHandler(gp gj.GruppenService, r *Renderer) *GruppenHandler {
+func NewGruppenHandler(_db *gorm.DB, r *Renderer) *GruppenHandler {
 	return &GruppenHandler{
-		gruppenProvider: gp,
-		render:          r,
+		db:     _db,
+		render: r,
 	}
 }
 
 func (h *GruppenHandler) Index(w http.ResponseWriter, r *http.Request) {
-	g, err := h.gruppenProvider.GetAll()
-	if err != nil {
+	var g []*db.Gruppe
+
+	if err := h.db.Find(&g).Error; err != nil {
 		log.Printf("error while getting all groups: %v\n", err)
 		return
 	}
 
 	data := struct {
-		Gruppe []*gj.Gruppe
+		Gruppe []*db.Gruppe
 	}{
 		Gruppe: g,
 	}
@@ -47,33 +49,64 @@ func (h *GruppenHandler) Create(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *GruppenHandler) CreatePOST(w http.ResponseWriter, r *http.Request) {
-	var g gj.Gruppe
+	var g db.Gruppe
 
+	if err := r.ParseForm(); err != nil {
+		log.Printf("could not parse form: %v\n", err)
+		return
+	}
 	g.Name = r.Form.Get("name")
 
-	err := h.gruppenProvider.Create(&g)
-	if err != nil {
-		log.Printf("error while creating gruppe %s: %v\n", g.Name, err)
+	if err := h.db.Create(&g).Error; err != nil {
+		log.Printf("error while creating new group: %v\n", err)
 		return
 	}
 
 	http.Redirect(w, r, "/gruppe", 301)
 }
 
-func (h *GruppenHandler) Delete(w http.ResponseWriter, id int) {
-	g, err := h.gruppenProvider.Get(id)
+func (h *GruppenHandler) Show(w http.ResponseWriter, id uint) {
+	var group db.Gruppe
+	var member []db.Person
+
+	if err := h.db.First(&group, id).Error; err != nil {
+		log.Printf("error while getting group info: %v\n", err)
+		return
+	}
+
+	if err := h.db.Where("gruppe = ?", id).Find(&member).Error; err != nil {
+		log.Printf("could not find any member of group %d: %v\n", id, err)
+	}
+
+	data := struct {
+		Gruppe     db.Gruppe
+		Mitglieder []db.Person
+	}{
+		Gruppe:     group,
+		Mitglieder: member,
+	}
+	err := h.render.Render("gruppe_show", "gruppe", w, &data)
 	if err != nil {
-		log.Printf("could not get gruppe (%d) while deleting: %v\n", id, err)
+		log.Printf("could not render template: %v\n", err)
+	}
+
+}
+
+func (h *GruppenHandler) Delete(w http.ResponseWriter, id uint) {
+	var g db.Gruppe
+	g.ID = id
+	if err := h.db.First(&g).Error; err != nil {
+		log.Printf("error while getting group for delete page: %v\n", err)
 		return
 	}
 
 	data := struct {
-		Gruppe *gj.Gruppe
+		Gruppe *db.Gruppe
 	}{
-		Gruppe: g,
+		Gruppe: &g,
 	}
 
-	err = h.render.Render("gruppe_delete", "gruppe", w, &data)
+	err := h.render.Render("gruppe_delete", "gruppe", w, &data)
 	if err != nil {
 		log.Printf("error while parsing template: %v\n", err)
 		return
@@ -101,10 +134,10 @@ func (h *GruppenHandler) DeletePOST(w http.ResponseWriter, r *http.Request) {
 		log.Printf("form value delete is not 'ok' %s\n", ok)
 		return
 	}
-
-	err = h.gruppenProvider.Delete(id)
-	if err != nil {
-		log.Printf("could not delete group from db: %v\n", err)
+	var g db.Gruppe
+	g.ID = uint(id)
+	if err = h.db.Delete(&g).Error; err != nil {
+		log.Printf("error while deleting group: %v\n", err)
 		return
 	}
 

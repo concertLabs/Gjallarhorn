@@ -6,41 +6,39 @@ import (
 	"strconv"
 	"strings"
 
-	gj "github.com/quiteawful/Gjallarhorn"
+	"github.com/jinzhu/gorm"
+	"github.com/quiteawful/Gjallarhorn/lib/db"
 )
 
 type LiedHandler struct {
-	render         *Renderer
-	liedProvider   gj.LiedService
-	personProvider gj.PersonService
-	verlagProvider gj.VerlagService
+	render *Renderer
+	db     *gorm.DB
 }
 
-func NewLiedHandler(lp gj.LiedService, pp gj.PersonService, vp gj.VerlagService, r *Renderer) *LiedHandler {
+func NewLiedHandler(_db *gorm.DB, r *Renderer) *LiedHandler {
 	return &LiedHandler{
-		render:         r,
-		liedProvider:   lp,
-		personProvider: pp,
-		verlagProvider: vp,
+		db:     _db,
+		render: r,
 	}
 }
 
 // IndexGET shows a list with all songs in the database
 func (h *LiedHandler) Index(w http.ResponseWriter, r *http.Request) {
 	// TODO: add pagination
-	l, err := h.liedProvider.GetAll()
-	if err != nil {
-		log.Printf("could not retreive all lieder: %v\n", err)
+
+	var l []db.Lied
+	if err := h.db.Find(&l).Error; err != nil {
+		log.Printf("could not get all lieder: %v\n", err)
 		return
 	}
 
 	data := struct {
-		Lied []*gj.Lied
+		Lied []db.Lied
 	}{
 		Lied: l,
 	}
 
-	err = h.render.Render("lied_index", "lied", w, &data)
+	err := h.render.Render("lied_index", "lied", w, &data)
 	if err != nil {
 		log.Printf("error while executing template: %v\n", err)
 		return
@@ -48,7 +46,27 @@ func (h *LiedHandler) Index(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *LiedHandler) Create(w http.ResponseWriter, r *http.Request) {
-	err := h.render.Render("lied_create", "lied", w, nil)
+
+	var p []db.Person
+	var v []db.Verlag
+
+	if err := h.db.Order("name, vorname").Find(&p).Error; err != nil {
+		log.Printf("could not find any persons: %v\n", err)
+	}
+
+	if err := h.db.Order("name").Find(&v).Error; err != nil {
+		log.Printf("could not find any verläge: %v\n", err)
+	}
+
+	data := struct {
+		Personen []db.Person
+		Verlag   []db.Verlag
+	}{
+		Personen: p,
+		Verlag:   v,
+	}
+
+	err := h.render.Render("lied_create", "lied", w, &data)
 	if err != nil {
 		log.Printf("error while executing template: %v\n", err)
 		return
@@ -57,7 +75,7 @@ func (h *LiedHandler) Create(w http.ResponseWriter, r *http.Request) {
 
 func (h *LiedHandler) CreatePOST(w http.ResponseWriter, r *http.Request) {
 	v := r.Form
-	var l gj.Lied
+	var l db.Lied
 	var err error
 
 	l.Titel = v.Get("titel")
@@ -72,10 +90,10 @@ func (h *LiedHandler) CreatePOST(w http.ResponseWriter, r *http.Request) {
 		log.Printf("could not convert komponistId to int: %v\n", err)
 		l.KomponistID = 0
 	}
-	l.TextID, err = strconv.Atoi(v.Get("text"))
+	l.TexterID, err = strconv.Atoi(v.Get("texter"))
 	if err != nil {
 		log.Printf("could not convert textID to int: %v\n", err)
-		l.TextID = 0
+		l.TexterID = 0
 	}
 
 	l.ArrangeurID, err = strconv.Atoi(v.Get("arrangeur"))
@@ -89,84 +107,81 @@ func (h *LiedHandler) CreatePOST(w http.ResponseWriter, r *http.Request) {
 		l.VerlagID = 0
 	}
 
-	err = h.liedProvider.Create(&l)
-	if err != nil {
-		log.Printf("could not create new lied: %v\n", err)
+	if err = h.db.Create(&l).Error; err != nil {
+		log.Printf("could not create lied (%v): %v\n", l, err)
 		return
 	}
 
 	http.Redirect(w, r, "/lied", 301)
 }
 
-func (h *LiedHandler) Show(w http.ResponseWriter, id int) {
-	l, err := h.liedProvider.Get(id)
-	if err != nil {
-		log.Printf("error while  getting lied: %v\n", err)
+func (h *LiedHandler) Show(w http.ResponseWriter, id uint) {
+	var l db.Lied
+	l.ID = id
+
+	if err := h.db.First(&l).Error; err != nil {
+		log.Printf("could not find lied %d: %v\n", id, err)
 		return
 	}
 
-	var komponist, text, arrangeur *gj.Person
-	var verlag *gj.Verlag
+	log.Printf("Lied: %+v\n", l)
 
-	komponist, err = h.personProvider.Get(l.KomponistID)
-	if err != nil && err != gj.ErrHasNoPerson {
-		log.Printf("error while getting komponist: %v\n", err)
-		return
+	var komponist, texter, arrangeur db.Person
+	var verlag db.Verlag
+
+	if err := h.db.Model(&l).Related(&komponist, "KomponistID").Error; err != nil {
+		log.Printf("could not find a komponist for %s: %v\n", l.Titel, err)
 	}
 
-	text, err = h.personProvider.Get(l.TextID)
-	if err != nil && err != gj.ErrHasNoPerson {
-		log.Printf("error while getting texter: %v\n", err)
-		return
+	if err := h.db.Model(&l).Related(&texter, "TexterID").Error; err != nil {
+		log.Printf("could not find a texter for %s: %v\n", l.Titel, err)
 	}
 
-	arrangeur, err = h.personProvider.Get(l.ArrangeurID)
-	if err != nil && err != gj.ErrHasNoPerson {
-		log.Printf("error while getting arrangeuer: %v\n", err)
-		return
+	if err := h.db.Model(&l).Related(&arrangeur, "ArrangeurID").Error; err != nil {
+		log.Printf("could not find a arrangeur for %s: %v\n", l.Titel, err)
 	}
 
-	verlag, err = h.verlagProvider.Get(l.VerlagID)
-	if err != nil && err != gj.ErrHasNoVerlag {
-		log.Printf("error while getting verlag: %v\n", err)
-		return
+	if err := h.db.Model(&l).Related(&verlag, "VerlagID").Error; err != nil {
+		log.Print("could not find any verlag for %s: %v\n", l.Titel, err)
 	}
 
 	data := struct {
-		Lied      *gj.Lied
-		Komponist *gj.Person
-		Text      *gj.Person
-		Arrangeur *gj.Person
-		Verlag    *gj.Verlag
+		Lied      *db.Lied
+		Komponist *db.Person
+		Text      *db.Person
+		Arrangeur *db.Person
+		Verlag    *db.Verlag
 	}{
-		Lied:      l,
-		Komponist: komponist,
-		Text:      text,
-		Arrangeur: arrangeur,
-		Verlag:    verlag,
+		Lied:      &l,
+		Komponist: &komponist,
+		Text:      &texter,
+		Arrangeur: &arrangeur,
+		Verlag:    &verlag,
 	}
 
-	err = h.render.Render("lied_show", "lied", w, &data)
+	err := h.render.Render("lied_show", "lied", w, &data)
 	if err != nil {
 		log.Printf("error while parsing template")
 		return
 	}
 }
 
-func (h *LiedHandler) Delete(w http.ResponseWriter, id int) {
-	l, err := h.liedProvider.Get(id)
-	if err != nil {
-		log.Printf("error while getting lied: %v\n", err)
+func (h *LiedHandler) Delete(w http.ResponseWriter, id uint) {
+	var l db.Lied
+	l.ID = id
+
+	if err := h.db.First(&l).Error; err != nil {
+		log.Printf("could not get lied for delete page: %v\n", err)
 		return
 	}
 
 	data := struct {
-		Lied *gj.Lied
+		Lied *db.Lied
 	}{
-		Lied: l,
+		Lied: &l,
 	}
 
-	err = h.render.Render("lied_delete", "lied", w, &data)
+	err := h.render.Render("lied_delete", "lied", w, &data)
 	if err != nil {
 		log.Printf("error while parsing template")
 		return
@@ -195,9 +210,10 @@ func (h *LiedHandler) DeletePOST(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = h.liedProvider.Delete(id)
-	if err != nil {
-		log.Printf("could not delete lied from db: %v\n", err)
+	var l db.Lied
+	l.ID = uint(id)
+	if err = h.db.Delete(&l).Error; err != nil {
+		log.Printf("could not delete lied: %v\n", err)
 		return
 	}
 

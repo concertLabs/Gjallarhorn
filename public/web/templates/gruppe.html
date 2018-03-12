@@ -1,12 +1,18 @@
 {{define "gruppe_index"}}
 	{{template "header"}}
 	<h2>Gruppen</h2>
-	<a href="/daten/gruppe/add">Neue Gruppe hinzufügen</a>
+	<a href="/gruppe/add">Neue Gruppe hinzufügen</a>
 
 	<ul class="uk-list uk-list-line">
 		{{range $i, $e := .Gruppe }}
-		<li>{{$i}}. {{$e.Name}} <a href="/daten/gruppe/delete/{{$e.ID}}">Gruppe löschen</a>
-			{{end}}
+			<li>
+				<a href="/gruppe/show/{{$e.ID}}">
+					{{$i}}. {{$e.Name}} 
+				</a>
+				<a href="/gruppe/delete/{{$e.ID}}">
+					Gruppe löschen
+				</a>
+		{{end}}
 	</ul>
 	{{template "footer"}}
 {{end}}
@@ -16,7 +22,7 @@
 	{{template "header"}}
 	<h2>Neue Gruppe anlegen</h2>
 
-	<form class="uk-form-horizontal" method="post" action="/daten/gruppe/add">
+	<form class="uk-form-horizontal" method="post" action="/gruppe/add">
 		<div class="uk-margin">
 			<label class="uk-form-label" for="form-name">Gruppenanme:</label>
 			<div class="uk-form-controls">
@@ -32,7 +38,15 @@
 
 {{define "gruppe_show"}}
 	{{template "header"}}
+	<h2>Mitglieder der Gruppe: {{.Gruppe.Name}} (ID: {{.Gruppe.ID}})</h2>
 
+	<ul>
+		{{range $i, $e := .Mitglieder}}
+			<li>
+				<a href="/person/show/{{$e.ID}}">{{$e.Name}}, {{$e.Vorname}}</a>
+			</li>
+		{{end}}
+	</ul>
 	{{template "footer"}}
 {{end}}
 
@@ -47,7 +61,7 @@
 	<h2>Warnung!</h2>
 
 	Möchsten Sie wirklich $.Gruppe.Name}} löschen?
-	<form class="uk-form-horizontal" method="post" action="/daten/gruppe/delete/{{.Gruppe.ID}}">
+	<form class="uk-form-horizontal" method="post" action="/gruppe/delete/{{.Gruppe.ID}}">
 		<input type="hidden" name="delete" value="ok">
 		<input type="submit" value="Gruppe löschen">
 	</form>

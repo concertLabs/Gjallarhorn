@@ -6,7 +6,7 @@
 	
 	<ul class="uk-list uk-list-line">
 		{{ range $i, $e := .Person }}
-		<li>{{$i}}. {{$e.Surname}} {{ $e.Name }} <a href="/person/show/{{$e.ID}}">Anzeigen</a></li>
+		<li>{{$i}}. {{$e.Vorname}} {{ $e.Name }} <a href="/person/show/{{$e.ID}}">Anzeigen</a></li>
 		{{end}}
 	</ul>
 
@@ -68,9 +68,13 @@
 			</div>
 		</div>
 		<div class="uk-margin">
-			<label class="uk-form-label" for="form-password">Passwort:</label>
+			<label class="uk-form-label" for="form-gruppe">Gruppe:</label>
 			<div class="uk-form-controls">
-				<input class="uk-input" id="form-password" type="text" name="password">
+				<select class="uk-select" id="form-gruppe" name="gruppe">
+					{{range $v := .Gruppen}}
+						<option value="{{$v.ID}}">{{$v.Name}}</option>
+					{{end}}	
+				</select>
 			</div>
 		</div>
 
@@ -83,21 +87,28 @@
 {{define "person_show"}}
 	{{template "header"}}
 
-	<h2>{{.Person.Name}}, {{.Person.Surname}}</h2>
+	<h2>{{.Person.Name}}, {{.Person.Vorname}} (ID: {{.Person.ID}})</h2>
 	
 	<ul>
 		<li>Name: {{.Person.Name}}</li>
-		<li>Vorname: {{.Person.Surname}}</li>
-		<li>Strasse: {{.Person.Street}}</li>
-		<li>PLZ: {{.Person.Zipcode}}</li>
-		<li>Ort: {{.Person.City}}</li>
-		<li>Geburtstag: {{.Person.BirthDate}}</li>
-		<li>Mitglied seit: {{.Person.MemberSince}}</li>
-		<li>Geburtstag: {{.Person.BirthDate}}</li>
+		<li>Vorname: {{.Person.Vorname}}</li>
+		<li>Strasse: {{.Person.Strasse}}</li>
+		<li>PLZ: {{.Person.PLZ}}</li>
+		<li>Ort: {{.Person.Ort}}</li>
+		<li>Geburtstag: {{.Person.Geburtstag}}</li>
+		<li>Mitglied seit: {{.Person.MitgliedSeit}}</li>
 		<li>Email: {{.Person.Email}}</li>
 	</ul>
 	
 	<a href="/person/delete/{{.Person.ID}}">Person löschen</a>
+	<a href="/person/edit/{{.Person.ID}}">Person bearbeiten</a>
+	
+	<ul>
+		{{range $i, $e := .Lieder}}
+			<li><a href="/lied/show/{{$e.ID}}">{{$e.Titel}}</a></li>
+		{{end}}
+	</ul>
+
 
 	{{template "footer"}}
 {{end}}
@@ -106,7 +117,7 @@
 	{{template "header"}}
 	<h2>Warnung!</h2>
 
-	Möchten Sie wirklich {{.Person.Name}}, {{.Person.Surname}} löschen?
+	Möchten Sie wirklich {{.Person.Name}}, {{.Person.Vorname}} löschen?
 	<form class="uk-form-horizontal" method="post" action="/person/delete/{{.Person.ID}}">
 		<input type="hidden" name="delete" value="ok">
 		<input type="submit" value="Person löschen">	
@@ -120,5 +131,66 @@
 {{define "person_edit"}}
 	{{template "header"}}
 
+	<h2>{{.Person.Name}}, {{.Person.Vorname}} bearbeiten</h2>
+
+	<form class="uk-form-horizontal" method="post" action="/person/edit">
+		<input type="hidden" name="id" value="{{.Person.ID}}">
+		<div class="uk-margin">
+			<label class="uk-form-label" for="form-name">Name:</label>
+			<div class="uk-form-controls">
+				<input class="uk-input" id="form-name" type="text" name="name" value="{{.Person.Name}}">
+			</div>
+		</div>
+		<div class="uk-margin">
+			<label class="uk-form-label" for="form-surname">Vorname:</label>
+			<div class="uk-form-controls">
+				<input class="uk-input" id="form-surname" type="text" name="surname" value="{{.Person.Vorname}}">
+			</div>
+		</div>
+		<div class="uk-margin">
+			<label class="uk-form-label" for="form-street">Strasse:</label>
+			<div class="uk-form-controls">
+				<input class="uk-input" id="form-street" type="text" name="street" value="{{.Person.Strasse}}">
+			</div>
+		</div>
+		<div class="uk-margin">
+			<label class="uk-form-label" for="form-zipcode">PLZ:</label>
+			<div class="uk-form-controls">
+				<input class="uk-input" id="form-zipcode" type="text" name="zipcode" value="{{.Person.PLZ}}">
+			</div>
+		</div>
+		<div class="uk-margin">
+			<label class="uk-form-label" for="form-city">Ort:</label>
+			<div class="uk-form-controls">
+				<input class="uk-input" id="form-city" type="text" name="city" value="{{.Person.PLZ}}">
+			</div>
+		</div>
+		<div class="uk-margin">
+			<label class="uk-form-label" for="form-birthdate">Geburtsdatum:</label>
+			<div class="uk-form-controls">
+				<input class="uk-input" id="form-birthdate" type="text" name="birth_date" value="{{.Person.Geburtstag}}">
+			</div>
+		</div>
+		<div class="uk-margin">
+			<label class="uk-form-label" for="form-membersince">Mitglied seit:</label>
+			<div class="uk-form-controls">
+				<input class="uk-input" id="form-membersince" type="text" name="member_since" value="{{.Person.MitgliedSeit}}">
+			</div>
+		</div>
+		<div class="uk-margin">
+			<label class="uk-form-label" for="form-email">Email:</label>
+			<div class="uk-form-controls">
+				<input class="uk-input" id="form-email" type="text" name="email" value="{{.Person.Email}}">
+			</div>
+		</div>
+		<div class="uk-margin">
+			<label class="uk-form-label" for="form-password">Passwort:</label>
+			<div class="uk-form-controls">
+				<input class="uk-input" id="form-password" type="text" name="password">
+			</div>
+		</div>
+
+		<input type="submit" value="Abschicken">
+	</form>
 	{{template "footer"}}
 {{end}}

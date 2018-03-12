@@ -17,12 +17,59 @@
 	{{template "header"}}
 	<h2>Neuen Verlag hinzufügen</h2>
 
+	<form class="uk-form-horizontal" method="post" action="/verlag/add">
+		<div class="uk-margin">
+			<label class="uk-form-label" for="form-name">Verlagsname:</label>
+			<div class="uk-form-controls">
+				<input class="uk-input" id="form-name" type="text" name="name">
+			</div>
+		</div>
+
+		<div class="uk-margin">
+			<label class="uk-form-label" for="form-street">Strasse:</label>
+			<div class="uk-form-controls">
+				<input class="uk-input" id="form-street" type="text" name="street">
+			</div>
+		</div>
+
+
+		<div class="uk-margin">
+			<label class="uk-form-label" for="form-zipcode">PLZ:</label>
+			<div class="uk-form-controls">
+				<input class="uk-input" id="form-zipcode" type="text" name="zipcode">
+			</div>
+		</div>
+
+		<div class="uk-margin">
+			<label class="uk-form-label" for="form-city">Ort:</label>
+			<div class="uk-form-controls">
+				<input class="uk-input" id="form-city" type="text" name="city">
+			</div>
+		</div>
+
+		<input type="submit" value="Abschicken">
+	</form>
 	{{template "footer"}}
 {{end}}
 
 {{define "verlag_show"}}
 	{{template "header"}}
-	<h2>Verlag: {{.Name}}</h2>
+	<h2>Verlag: {{.Verlag.Name}} (ID: {{.Verlag.ID}})</h2>
+
+	<ul>
+		<li>{{.Verlag.Name }}</li>
+		<li>{{.Verlag.Strasse }}</li>
+		<li>{{.Verlag.PLZ }}</li>
+		<li>{{.Verlag.Ort }}</li>
+	</ul>
+
+	<a href="/verlag/delete/{{.Verlag.ID}}">Verlag löschen</a>
+
+	<ul>
+		{{range $i, $e := .Lieder }}
+		<li><a href="/lied/show/{{$e.ID}}">{{$e.Titel}}</a></li>
+		{{end}}
+	</ul>
 	{{template "footer"}}
 {{end}}
 

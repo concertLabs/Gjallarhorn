@@ -1,6 +1,15 @@
 {{define "verlag_index"}}
 	{{template "header"}}
 	<h2>Übersicht der Musikverlage</h2>
+	<a href="/verlag/add">Neuen Verlag hinzufügen</a>
+
+	<ul class="uk-list uk-list-horizontal">
+		{{ range $i, $e := .Verlag }}
+		<li>
+			{{$i}}. {{$e.Name}} <a href="/verlag/show/{{$e.ID}}">Verlag anzeigen</a>
+		</li>
+		{{end}}
+	</ul>
 	{{template "footer"}}
 {{end}}
 

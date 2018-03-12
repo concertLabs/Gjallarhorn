@@ -31,7 +31,7 @@ type App struct {
 	PersonHandler  *PersonHandler
 	LiedHandler    *LiedHandler
 	GruppenHandler *GruppenHandler
-	// VerlagHandler *VerlagHandler
+	VerlagHandler  *VerlagHandler
 }
 
 // New creates a new web App based on the main config
@@ -61,7 +61,7 @@ func New(
 	app.PersonHandler = NewPersonHandler(ps, app.Renderer)
 	app.LiedHandler = NewLiedHandler(ls, ps, vs, app.Renderer)
 	app.GruppenHandler = NewGruppenHandler(gs, app.Renderer)
-	// app.VerlagHandler = NewVerlagHandler(vs, app.Renderer)
+	app.VerlagHandler = NewVerlagHandler(vs, app.Renderer)
 
 	err := app.addHandlers()
 	if err != nil {
@@ -92,10 +92,10 @@ func (a App) addHandlers() error {
 	// create each handler
 	a.Mux.HandleFunc("/", a.IndexHandler.Index).Methods("GET")
 
-	a.Mux.HandleFunc("/person", a.PersonHandler.Index).Methods("GET")                                           // show all
-	a.Mux.HandleFunc("/person/add", a.PersonHandler.Create).Methods("GET")                                      // add new
-	a.Mux.HandleFunc("/person/add", parseForm(a.PersonHandler.CreatePOST)).Methods("POST")                      // add new
-	a.Mux.HandleFunc("/person/show/{id:[0-9]+}", parseID(a.PersonHandler.Show, "/person/show/")).Methods("GET") // show a single person
+	a.Mux.HandleFunc("/person", a.PersonHandler.Index).Methods("GET")
+	a.Mux.HandleFunc("/person/add", a.PersonHandler.Create).Methods("GET")
+	a.Mux.HandleFunc("/person/add", parseForm(a.PersonHandler.CreatePOST)).Methods("POST")
+	a.Mux.HandleFunc("/person/show/{id:[0-9]+}", parseID(a.PersonHandler.Show, "/person/show/")).Methods("GET")
 	a.Mux.HandleFunc("/person/delete/{id:[0-9]+}", parseID(a.PersonHandler.Delete, "/person/delete/")).Methods("GET")
 	a.Mux.HandleFunc("/person/delete/{id:[0-9]+}", a.PersonHandler.DeletePOST).Methods("POST")
 
@@ -106,11 +106,18 @@ func (a App) addHandlers() error {
 	a.Mux.HandleFunc("/lied/delete/{id:[0-9]+}", parseID(a.LiedHandler.Delete, "/lied/delete/")).Methods("GET")
 	a.Mux.HandleFunc("/lied/delete/{id:[0-9]+}", a.LiedHandler.DeletePOST).Methods("POST")
 
-	a.Mux.HandleFunc("/daten/gruppe", a.GruppenHandler.Index).Methods("GET") // main Gruppen details
-	a.Mux.HandleFunc("/daten/gruppe/add", a.GruppenHandler.Create).Methods("GET")
-	a.Mux.HandleFunc("/daten/gruppe/add", a.GruppenHandler.CreatePOST).Methods("POST")
-	a.Mux.HandleFunc("/daten/gruppe/delete/{id:[0-9]+}", parseID(a.GruppenHandler.Delete, "/daten/gruppe/delete/")).Methods("GET")
-	a.Mux.HandleFunc("/daten/gruppe/delete/{id:[0-9]+}", a.GruppenHandler.DeletePOST).Methods("POST")
+	a.Mux.HandleFunc("/gruppe", a.GruppenHandler.Index).Methods("GET")
+	a.Mux.HandleFunc("/gruppe/add", a.GruppenHandler.Create).Methods("GET")
+	a.Mux.HandleFunc("/gruppe/add", a.GruppenHandler.CreatePOST).Methods("POST")
+	a.Mux.HandleFunc("/gruppe/delete/{id:[0-9]+}", parseID(a.GruppenHandler.Delete, "/gruppe/delete/")).Methods("GET")
+	a.Mux.HandleFunc("/gruppe/delete/{id:[0-9]+}", a.GruppenHandler.DeletePOST).Methods("POST")
+
+	a.Mux.HandleFunc("/verlag", a.VerlagHandler.Index).Methods("GET")
+	a.Mux.HandleFunc("/verlag/add", a.VerlagHandler.Create).Methods("GET")
+	a.Mux.HandleFunc("/verlag/add", parseForm(a.VerlagHandler.CreatePOST)).Methods("POST")
+	a.Mux.HandleFunc("/verlag/show/{id:[0-9]+}", parseID(a.VerlagHandler.Show, "/verlag/delete/")).Methods("GET")
+	a.Mux.HandleFunc("/verlag/delete/{id:[0-9]+}", parseID(a.VerlagHandler.Delete, "/verlag/delete/")).Methods("GET")
+	a.Mux.HandleFunc("/verlag/delete/{id:[0-9]+}", a.VerlagHandler.DeletePOST).Methods("POST")
 
 	pp := a.Mux.PathPrefix("/static/")
 	fs := http.FileServer(http.Dir(a.AssetDir + "/static/"))

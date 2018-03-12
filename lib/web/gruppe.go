@@ -57,7 +57,7 @@ func (h *GruppenHandler) CreatePOST(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	http.Redirect(w, r, "/daten/gruppe", 301)
+	http.Redirect(w, r, "/gruppe", 301)
 }
 
 func (h *GruppenHandler) Delete(w http.ResponseWriter, id int) {
@@ -81,7 +81,7 @@ func (h *GruppenHandler) Delete(w http.ResponseWriter, id int) {
 }
 
 func (h *GruppenHandler) DeletePOST(w http.ResponseWriter, r *http.Request) {
-	p := strings.Replace(r.URL.Path, "/daten/gruppe/delete/", "", 1)
+	p := strings.Replace(r.URL.Path, "/gruppe/delete/", "", 1)
 
 	id, err := strconv.Atoi(p)
 	if err != nil {

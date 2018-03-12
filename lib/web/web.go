@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
+	"github.com/jinzhu/gorm"
 	gjallarhorn "github.com/quiteawful/Gjallarhorn"
 	"github.com/quiteawful/Gjallarhorn/lib/config"
 )
@@ -26,6 +27,8 @@ type App struct {
 
 	Renderer *Renderer
 
+	db *gorm.DB
+
 	// Handler with Routes
 	IndexHandler   *IndexHandler
 	PersonHandler  *PersonHandler
@@ -37,6 +40,7 @@ type App struct {
 // New creates a new web App based on the main config
 func New(
 	cfg config.HttpdConfig,
+	_db *gorm.DB,
 	ps gjallarhorn.PersonService,
 	ls gjallarhorn.LiedService,
 	vs gjallarhorn.VerlagService,
@@ -55,6 +59,7 @@ func New(
 		Mux:      mux.NewRouter(),
 
 		Renderer: NewRenderer(cfg.AssetDir),
+		db:       _db,
 	}
 
 	app.IndexHandler = NewIndexHandler(app.Renderer)

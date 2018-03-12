@@ -6,7 +6,10 @@ import (
 	"os"
 	"os/signal"
 
+	"github.com/jinzhu/gorm"
+	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	"github.com/quiteawful/Gjallarhorn/lib/config"
+	mydb "github.com/quiteawful/Gjallarhorn/lib/db"
 	"github.com/quiteawful/Gjallarhorn/lib/db/sql"
 	"github.com/quiteawful/Gjallarhorn/lib/importer"
 	"github.com/quiteawful/Gjallarhorn/lib/servicemanager"
@@ -60,7 +63,14 @@ func main() {
 	vs := &sql.VerlagProvider{DB: db}
 	gs := &sql.GruppenProvider{DB: db}
 
-	websrvc, _ := web.New(cfg.Httpd, ps, ls, vs, gs)
+	gormdb, err := gorm.Open("sqlite3", "mvd.db")
+	if err != nil {
+		log.Fatalf("error while opening sqlite db: %v\n", err)
+	}
+
+	mydb.Setup(gormdb)
+
+	websrvc, _ := web.New(cfg.Httpd, gormdb, ps, ls, vs, gs)
 	manager.Add(websrvc)
 
 	manager.Start()

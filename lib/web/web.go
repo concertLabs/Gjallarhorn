@@ -100,6 +100,8 @@ func (a App) addHandlers() error {
 	a.Mux.HandleFunc("/lied/add", a.LiedHandler.Create).Methods("GET")
 	a.Mux.HandleFunc("/lied/add", parseForm(a.LiedHandler.CreatePOST)).Methods("POST")
 	a.Mux.HandleFunc("/lied/show/{id:[0-9]+}", parseID(a.LiedHandler.Show, "/lied/show/")).Methods("GET")
+	a.Mux.HandleFunc("/lied/edit/{id:[0-9]+}", parseID(a.LiedHandler.Edit, "/lied/edit/")).Methods("GET")
+	a.Mux.HandleFunc("/lied/edit/{id:[0-9]+}", a.LiedHandler.EditPOST).Methods("POSt")
 	a.Mux.HandleFunc("/lied/delete/{id:[0-9]+}", parseID(a.LiedHandler.Delete, "/lied/delete/")).Methods("GET")
 	a.Mux.HandleFunc("/lied/delete/{id:[0-9]+}", a.LiedHandler.DeletePOST).Methods("POST")
 
@@ -114,6 +116,8 @@ func (a App) addHandlers() error {
 	a.Mux.HandleFunc("/verlag/add", a.VerlagHandler.Create).Methods("GET")
 	a.Mux.HandleFunc("/verlag/add", parseForm(a.VerlagHandler.CreatePOST)).Methods("POST")
 	a.Mux.HandleFunc("/verlag/show/{id:[0-9]+}", parseID(a.VerlagHandler.Show, "/verlag/show/")).Methods("GET")
+	a.Mux.HandleFunc("/verlag/edit/{id:[0-9]+}", parseID(a.VerlagHandler.Edit, "/verlag/edit/")).Methods("GET")
+	a.Mux.HandleFunc("/verlag/edit/{id:[0-9]+}", a.VerlagHandler.EditPOST).Methods("POST")
 	a.Mux.HandleFunc("/verlag/delete/{id:[0-9]+}", parseID(a.VerlagHandler.Delete, "/verlag/delete/")).Methods("GET")
 	a.Mux.HandleFunc("/verlag/delete/{id:[0-9]+}", a.VerlagHandler.DeletePOST).Methods("POST")
 

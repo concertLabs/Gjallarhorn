@@ -64,6 +64,7 @@
 	</ul>
 
 	<a href="/verlag/delete/{{.Verlag.ID}}">Verlag löschen</a>
+	<a href="/verlag/edit/{{.Verlag.ID}}">Verlag bearbeiten</a>
 
 	<ul>
 		{{range $i, $e := .Lieder }}
@@ -76,6 +77,41 @@
 {{define "verlag_edit"}}
 	{{template "header"}}
 
+	<h2>{{.Verlag.Name}} bearbeiten</h2>
+
+	<form class="uk-form-horizontal" method="post" action="/verlag/edit/{{.Verlag.ID}}">
+		<input type="hidden" name="id" value="{{.Verlag.ID}}">
+		<div class="uk-margin">
+			<label class="uk-form-label" for="form-name">Verlagsname:</label>
+			<div class="uk-form-controls">
+				<input class="uk-input" id="form-name" type="text" name="name" value="{{.Verlag.Name}}">
+			</div>
+		</div>
+
+		<div class="uk-margin">
+			<label class="uk-form-label" for="form-street">Strasse:</label>
+			<div class="uk-form-controls">
+				<input class="uk-input" id="form-street" type="text" name="street" value="{{.Verlag.Strasse}}">
+			</div>
+		</div>
+
+
+		<div class="uk-margin">
+			<label class="uk-form-label" for="form-zipcode">PLZ:</label>
+			<div class="uk-form-controls">
+				<input class="uk-input" id="form-zipcode" type="text" name="zipcode" value="{{.Verlag.PLZ}}">
+			</div>
+		</div>
+
+		<div class="uk-margin">
+			<label class="uk-form-label" for="form-city">Ort:</label>
+			<div class="uk-form-controls">
+				<input class="uk-input" id="form-city" type="text" name="city" value="{{.Verlag.Ort}}">
+			</div>
+		</div>
+
+		<input type="submit" value="Abschicken">
+	</form>
 	{{template "footer"}}
 {{end}}
 

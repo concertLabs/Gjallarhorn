@@ -116,11 +116,108 @@
 	</ul>
 
 	<a href="/lied/delete/{{.Lied.ID}}">Lied löschen</a>
+	<a href="/lied/edit/{{.Lied.ID}}">Lied bearbeiten</a>
 	{{template "footer"}}
 {{end}}
 
 {{define "lied_edit"}}
 	{{template "header"}}
+	<h2>{{.Lied.Titel}} bearbeiten</h2>
+
+	<form class="uk-form-horizontal" method="post" action="/lied/edit/{{.Lied.ID}}">
+
+		<input type="hidden" name="id" value="{{.Lied.ID}}">
+		<div class="uk-margin">
+			<label class="uk-form-label" for="form-titel">Titel:</label>
+			<div class="uk-form-controls">
+				<input class="uk-input" id="form-titel" type="text" name="titel" value="{{.Lied.Titel}}">
+			</div>
+		</div>
+
+		<div class="uk-margin">
+			<label class="uk-form-label" for="form-untertitel">Untertitel:</label>
+			<div class="uk-form-controls">
+				<input class="uk-input" id="form-untertitel" type="text" name="untertitel" value="{{.Lied.Untertitel}}">
+			</div>
+		</div>
+
+		<div class="uk-margin">
+			<label class="uk-form-label" for="form-jahr">Jahr:</label>
+			<div class="uk-form-controls">
+				<input class="uk-input" id="form-jahr" type="text" name="jahr" value="{{.Lied.Jahr}}">
+			</div>
+		</div>
+
+		<div class="uk-margin">
+			<label class="uk-form-label" for="form-komponist">Komponist:</label>
+			<div class="uk-form-controls">
+				<select class="uk-select" id="form-komponist" name="komponist">
+					<option value="0"></option>
+					{{ $k := .Lied.KomponistID}}
+					{{range $v := .Personen}}
+						{{ if eq $v.ID $k}}
+							<option value="{{$v.ID}}" selected>{{$v.Name}}, {{$v.Vorname}}</option>
+						{{ else }}
+							<option value="{{$v.ID}}">{{$v.Name}}, {{$v.Vorname}}</option>
+						{{ end }}
+					{{end}}
+				</select>
+			</div>
+		</div>
+
+		<div class="uk-margin">
+			<label class="uk-form-label" for="form-texter">Texter:</label>
+			<div class="uk-form-controls">
+				<select class="uk-select" id="form-texter" name="texter">
+					<option value="0"></option>
+					{{ $k := .Lied.TexterID }}
+					{{range $v := .Personen}}
+						{{ if eq $v.ID $k }}
+							<option value="{{$v.ID}}" selected>{{$v.Name}}, {{$v.Vorname}}</option>
+						{{ else }}
+							<option value="{{$v.ID}}">{{$v.Name}}, {{$v.Vorname}}</option>
+						{{end}}
+					{{end}}
+				</select>
+			</div>
+		</div>
+
+		<div class="uk-margin">
+			<label class="uk-form-label" for="form-arrangeur">Arrangeur:</label>
+			<div class="uk-form-controls">
+				<select class="uk-select" id="form-arrangeur" name="arrangeur">
+					<option value="0"></option>
+					{{ $k := .Lied.ArrangeurID}}
+					{{range $v := .Personen}}
+						{{ if eq $v.ID $k}}
+							<option value="{{$v.ID}}" selected>{{$v.Name}}, {{$v.Vorname}}</option>
+						{{ else }}
+							<option value="{{$v.ID}}">{{$v.Name}}, {{$v.Vorname}}</option>
+						{{ end }}	
+					{{end}}
+				</select>
+			</div>
+		</div>
+
+		<div class="uk-margin">
+			<label class="uk-form-label" for="form-verlag">Verlag:</label>
+			<div class="uk-form-controls">
+				<select class="uk-select" id="form-verlag" name="verlag">
+					<option value="0"></option>
+					{{ $k := .Lied.VerlagID }}
+					{{range $v := .Verlag}}
+						{{ if eq $v.ID $k }}
+							<option value="{{$v.ID}}" selected>{{$v.Name}}</option>
+						{{ else }}
+							<option value="{{$v.ID}}">{{$v.Name}}</option>
+						{{ end }}
+					{{end}}
+				</select>
+			</div>
+		</div>
+	
+		<input type="submit" value="Abschicken">
+	</form>
 	{{template "footer"}}
 {{end}}
 

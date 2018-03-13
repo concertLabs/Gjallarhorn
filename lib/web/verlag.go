@@ -2,6 +2,7 @@
 package web
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"strconv"
@@ -53,6 +54,10 @@ func (h *VerlagHandler) Create(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *VerlagHandler) CreatePOST(w http.ResponseWriter, r *http.Request) {
+	if err := r.ParseForm(); err != nil {
+		log.Printf("error while parsing form values: %v\n", err)
+		return
+	}
 	var v db.Verlag
 
 	v.Name = r.Form.Get("name")
@@ -67,7 +72,6 @@ func (h *VerlagHandler) CreatePOST(w http.ResponseWriter, r *http.Request) {
 
 	http.Redirect(w, r, "/verlag", 301)
 }
-
 func (h *VerlagHandler) Show(w http.ResponseWriter, id uint) {
 	var v db.Verlag
 	if err := h.db.First(&v, id).Error; err != nil {
@@ -94,6 +98,51 @@ func (h *VerlagHandler) Show(w http.ResponseWriter, id uint) {
 		log.Printf("error while parsing template")
 		return
 	}
+}
+
+func (h *VerlagHandler) Edit(w http.ResponseWriter, id uint) {
+	var v db.Verlag
+	if err := h.db.First(&v, id).Error; err != nil {
+		log.Printf("error while getting verlag %d: %v\n", id, err)
+		return
+	}
+
+	data := struct {
+		Verlag *db.Verlag
+	}{
+		Verlag: &v,
+	}
+
+	err := h.render.Render("verlag_edit", "verlag", w, &data)
+	if err != nil {
+		log.Printf("error while parsing template")
+		return
+	}
+}
+
+func (h *VerlagHandler) EditPOST(w http.ResponseWriter, r *http.Request) {
+	if err := r.ParseForm(); err != nil {
+		log.Printf("error while parsing form values: %v\n", err)
+		return
+	}
+	var v db.Verlag
+
+	x, err := strconv.Atoi(r.Form.Get("id"))
+	if err != nil {
+		log.Printf("could not parse id for /verlag/edit/: %v\n", err)
+		return
+	}
+	v.ID = uint(x)
+	v.Name = r.Form.Get("name")
+	v.Strasse = r.Form.Get("street")
+	v.PLZ = r.Form.Get("zipcode")
+	v.Ort = r.Form.Get("city")
+
+	if err := h.db.Save(&v).Error; err != nil {
+		log.Printf("error while editing verlag %d: %v\n", v.ID, err)
+		return
+	}
+	http.Redirect(w, r, fmt.Sprintf("/verlag/show/%d", v.ID), 301)
 }
 
 func (h *VerlagHandler) Delete(w http.ResponseWriter, id uint) {
@@ -145,14 +194,6 @@ func (h *VerlagHandler) DeletePOST(w http.ResponseWriter, r *http.Request) {
 	}
 
 	http.Redirect(w, r, "/daten/verlag/", 300)
-}
-
-func (h *VerlagHandler) Edit(w http.ResponseWriter, r *http.Request) {
-	panic("not implemented")
-}
-
-func (h *VerlagHandler) EditPOST(w http.ResponseWriter, r *http.Request) {
-	panic("not implemented")
 }
 
 func (h *VerlagHandler) Search(w http.ResponseWriter, r *http.Request) {

@@ -74,6 +74,8 @@ func (h *LiedHandler) Create(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *LiedHandler) CreatePOST(w http.ResponseWriter, r *http.Request) {
+	// TODO: support multiple texter, arrangeurs, komponisten
+	// -> Böhmischer Wind
 	v := r.Form
 	var l db.Lied
 	var err error
@@ -123,8 +125,6 @@ func (h *LiedHandler) Show(w http.ResponseWriter, id uint) {
 		log.Printf("could not find lied %d: %v\n", id, err)
 		return
 	}
-
-	log.Printf("Lied: %+v\n", l)
 
 	var komponist, texter, arrangeur db.Person
 	var verlag db.Verlag
@@ -219,4 +219,115 @@ func (h *LiedHandler) DeletePOST(w http.ResponseWriter, r *http.Request) {
 
 	// TODO: change http code
 	http.Redirect(w, r, "/lied", 300)
+}
+
+func (h *LiedHandler) Edit(w http.ResponseWriter, id uint) {
+	var l db.Lied
+
+	if err := h.db.First(&l, id).Error; err != nil {
+		log.Printf("/lied/edit: error while getting lied: %v\n", err)
+		return
+	}
+
+	if l.KomponistID != 0 {
+		if err := h.db.Model(&l).Related(&l.Komponist, "KomponistID").Error; err != nil {
+			log.Printf("could not find a komponist for %s: %v\n", l.Titel, err)
+		}
+	}
+
+	if l.TexterID != 0 {
+		if err := h.db.Model(&l).Related(&l.Texter, "TexterID").Error; err != nil {
+			log.Printf("could not find a texter for %s: %v\n", l.Titel, err)
+		}
+	}
+
+	if l.ArrangeurID != 0 {
+		if err := h.db.Model(&l).Related(&l.Arrangeur, "ArrangeurID").Error; err != nil {
+			log.Printf("could not find a arrangeur for %s: %v\n", l.Titel, err)
+		}
+	}
+
+	if l.VerlagID != 0 {
+		if err := h.db.Model(&l).Related(&l.Verlag, "VerlagID").Error; err != nil {
+			log.Print("could not find any verlag for %s: %v\n", l.Titel, err)
+		}
+	}
+
+	var _p []db.Person
+	var _v []db.Verlag
+
+	if err := h.db.Find(&_p).Error; err != nil {
+		log.Printf("/lied/edit/: could not get list of personeo: %v\n", err)
+	}
+	if err := h.db.Find(&_v).Error; err != nil {
+		log.Printf("/lied/edit/: could not get list of verläge: %v\n", err)
+	}
+
+	data := struct {
+		Lied     *db.Lied
+		Personen []db.Person
+		Verlag   []db.Verlag
+	}{
+		Lied:     &l,
+		Personen: _p,
+		Verlag:   _v,
+	}
+
+	if err := h.render.Render("lied_edit", "lied", w, &data); err != nil {
+		log.Printf("could not render edit page for %d: %v\n", id, err)
+		return
+	}
+}
+
+func (h *LiedHandler) EditPOST(w http.ResponseWriter, r *http.Request) {
+	if err := r.ParseForm(); err != nil {
+		log.Printf("could not parse edit for mof lied: %v\n", err)
+		return
+	}
+
+	var l db.Lied
+
+	x, err := strconv.Atoi(r.Form.Get("id"))
+	if err != nil {
+		log.Printf("could not convert lied id to int : %v\n", err)
+		return
+	}
+
+	l.ID = uint(x)
+	l.Titel = r.Form.Get("titel")
+	l.Untertitel = r.Form.Get("untertitel")
+	l.Jahr, err = strconv.Atoi(r.Form.Get("jahr"))
+
+	if err != nil {
+		log.Printf("could not convert jahr to int: %v\n", err)
+		l.Jahr = 0
+	}
+	l.KomponistID, err = strconv.Atoi(r.Form.Get("komponist"))
+	if err != nil {
+		log.Printf("could not convert komponistId to int: %v\n", err)
+		l.KomponistID = 0
+	}
+	l.TexterID, err = strconv.Atoi(r.Form.Get("texter"))
+	if err != nil {
+		log.Printf("could not convert textID to int: %v\n", err)
+		l.TexterID = 0
+	}
+
+	l.ArrangeurID, err = strconv.Atoi(r.Form.Get("arrangeur"))
+	if err != nil {
+		log.Printf("could not convert arrangeurID to int: %v\n", err)
+		l.ArrangeurID = 0
+	}
+	l.VerlagID, err = strconv.Atoi(r.Form.Get("verlag"))
+	if err != nil {
+		log.Printf("could not convert verlagID to int: %v\n", err)
+		l.VerlagID = 0
+	}
+
+	if err := h.db.Save(&l).Error; err != nil {
+		log.Printf("could not save lied %v\n", err)
+		return
+	}
+
+	http.Redirect(w, r, "/lied", 301)
 }

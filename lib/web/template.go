@@ -35,7 +35,7 @@ func (p *Renderer) loadTemplate(name, file string) error {
 			if len(s) < n {
 				return s
 			}
-			return s[:n]
+			return s[:n] + " ..."
 		},
 	}
 	p.T = p.T.Funcs(funcMap)

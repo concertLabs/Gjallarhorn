@@ -11,7 +11,13 @@
 				{{$e.Titel}}
 			</a>
 			{{ if $e.Untertitel }}
-			( {{ trimer $e.Untertitel 30 }} )
+			( 
+				{{ if gt (len $e.Untertitel) 30 }}
+					{{ trimer $e.Untertitel 30 }}
+				{{ else }}
+					{{ $e.Untertitel }}
+				{{ end }}	
+			)
 			{{ end }}
 		</li>
 		{{end}}

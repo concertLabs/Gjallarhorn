@@ -11,7 +11,7 @@
 				{{$e.Titel}}
 			</a>
 			{{ if $e.Untertitel }}
-			( {{ $e.Untertitel }} )
+			( {{ trimer $e.Untertitel 30 }} )
 			{{ end }}
 		</li>
 		{{end}}

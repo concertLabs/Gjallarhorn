@@ -29,6 +29,17 @@ func (p *Renderer) loadTemplate(name, file string) error {
 	// Maybe we can cache this
 	var err error
 	p.T = template.New(name)
+	// add own funcs to template
+	funcMap := template.FuncMap{
+		"trimer": func(s string, n int) string {
+			if len(s) < n {
+				return s
+			}
+			return s[:n]
+		},
+	}
+	p.T = p.T.Funcs(funcMap)
+
 	p.T, err = p.T.ParseFiles(basefile, tempfile)
 	if err != nil {
 		return err

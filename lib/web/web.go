@@ -29,11 +29,12 @@ type App struct {
 	db *gorm.DB
 
 	// Handler with Routes
-	IndexHandler   *IndexHandler
-	PersonHandler  *PersonHandler
-	LiedHandler    *LiedHandler
-	GruppenHandler *GruppenHandler
-	VerlagHandler  *VerlagHandler
+	IndexHandler      *IndexHandler
+	PersonHandler     *PersonHandler
+	LiedHandler       *LiedHandler
+	GruppenHandler    *GruppenHandler
+	VerlagHandler     *VerlagHandler
+	RepertoireHandler *RepertoireHandler
 }
 
 // New creates a new web App based on the main config

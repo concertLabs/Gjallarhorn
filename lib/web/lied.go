@@ -87,27 +87,98 @@ func (h *LiedHandler) CreatePOST(w http.ResponseWriter, r *http.Request) {
 		log.Printf("could not convert jahr to int: %v\n", err)
 		l.Jahr = 0
 	}
-	l.KomponistID, err = strconv.Atoi(v.Get("komponist"))
+
+	// Komponisten
+	var k1, k2, k3 db.Person
+	_k1, err := strconv.Atoi(v.Get("komponist1"))
+	k1.ID = uint(_k1)
 	if err != nil {
 		log.Printf("could not convert komponistId to int: %v\n", err)
-		l.KomponistID = 0
+		k1.ID = 0
 	}
-	l.TexterID, err = strconv.Atoi(v.Get("texter"))
+	_k2, err := strconv.Atoi(v.Get("komponist2"))
+	k2.ID = uint(_k2)
+	if err != nil {
+		log.Printf("could not convert komponistId to int: %v\n", err)
+		k2.ID = 0
+	}
+	_k3, err := strconv.Atoi(v.Get("komponist3"))
+	k3.ID = uint(_k3)
+	if err != nil {
+		log.Printf("could not convert komponistId to int: %v\n", err)
+		k3.ID = 0
+	}
+	l.Komponisten = append(l.Komponisten, k1, k2, k3)
+
+	// Texter
+	var t1, t2, t3 db.Person
+
+	_t1, err := strconv.Atoi(v.Get("texter1"))
+	t1.ID = uint(_t1)
 	if err != nil {
 		log.Printf("could not convert textID to int: %v\n", err)
-		l.TexterID = 0
+		t1.ID = 0
 	}
+	_t2, err := strconv.Atoi(v.Get("texter2"))
+	t2.ID = uint(_t2)
+	if err != nil {
+		log.Printf("could not convert textID to int: %v\n", err)
+		t2.ID = 0
+	}
+	_t3, err := strconv.Atoi(v.Get("texter3"))
+	t3.ID = uint(_t3)
+	if err != nil {
+		log.Printf("could not convert textID to int: %v\n", err)
+		t3.ID = 0
+	}
+	l.Texter = append(l.Texter, t1, t2, t3)
 
-	l.ArrangeurID, err = strconv.Atoi(v.Get("arrangeur"))
+	// Arrangeur
+	var a1, a2, a3 db.Person
+
+	_a1, err := strconv.Atoi(v.Get("arrangeur1"))
+	a1.ID = uint(_a1)
 	if err != nil {
 		log.Printf("could not convert arrangeurID to int: %v\n", err)
-		l.ArrangeurID = 0
+		a1.ID = 0
 	}
-	l.VerlagID, err = strconv.Atoi(v.Get("verlag"))
+	_a2, err := strconv.Atoi(v.Get("arrangeur2"))
+	a2.ID = uint(_a2)
+	if err != nil {
+		log.Printf("could not convert arrangeurID to int: %v\n", err)
+		a2.ID = 0
+	}
+	_a3, err := strconv.Atoi(v.Get("arrangeur3"))
+	a3.ID = uint(_a3)
+	if err != nil {
+		log.Printf("could not convert arrangeurID to int: %v\n", err)
+		a3.ID = 0
+	}
+	l.Arrangeur = append(l.Arrangeur, a1, a2, a3)
+
+	// Verlag
+	var v1, V2 /* hihihi */, v3 db.Verlag
+
+	_v1, err := strconv.Atoi(v.Get("verlag1"))
+	v1.ID = uint(_v1)
 	if err != nil {
 		log.Printf("could not convert verlagID to int: %v\n", err)
-		l.VerlagID = 0
+		v1.ID = 0
 	}
+	_v2, err := strconv.Atoi(v.Get("verlag2"))
+	V2.ID = uint(_v2)
+	if err != nil {
+		log.Printf("could not convert verlagID to int: %v\n", err)
+		V2.ID = 0
+	}
+	_v3, err := strconv.Atoi(v.Get("verlag3"))
+	v3.ID = uint(_v3)
+	if err != nil {
+		log.Printf("could not convert verlagID to int: %v\n", err)
+		v3.ID = 0
+	}
+
+	l.Verlag = append(l.Verlag, v1, V2, v3)
 
 	if err = h.db.Create(&l).Error; err != nil {
 		log.Printf("could not create lied (%v): %v\n", l, err)
@@ -126,37 +197,37 @@ func (h *LiedHandler) Show(w http.ResponseWriter, id uint) {
 		return
 	}
 
-	var komponist, texter, arrangeur db.Person
-	var verlag db.Verlag
+	var komponist, texter, arrangeur []db.Person
+	var verlag []db.Verlag
 
-	if err := h.db.Model(&l).Related(&komponist, "KomponistID").Error; err != nil {
+	if err := h.db.Model(&l).Related(&komponist, "person").Error; err != nil {
 		log.Printf("could not find a komponist for %s: %v\n", l.Titel, err)
 	}
 
-	if err := h.db.Model(&l).Related(&texter, "TexterID").Error; err != nil {
+	if err := h.db.Model(&l).Related(&texter, "person").Error; err != nil {
 		log.Printf("could not find a texter for %s: %v\n", l.Titel, err)
 	}
 
-	if err := h.db.Model(&l).Related(&arrangeur, "ArrangeurID").Error; err != nil {
+	if err := h.db.Model(&l).Related(&arrangeur, "person").Error; err != nil {
 		log.Printf("could not find a arrangeur for %s: %v\n", l.Titel, err)
 	}
 
-	if err := h.db.Model(&l).Related(&verlag, "VerlagID").Error; err != nil {
+	if err := h.db.Model(&l).Related(&verlag, "person").Error; err != nil {
 		log.Print("could not find any verlag for %s: %v\n", l.Titel, err)
 	}
 
 	data := struct {
 		Lied      *db.Lied
-		Komponist *db.Person
-		Text      *db.Person
-		Arrangeur *db.Person
-		Verlag    *db.Verlag
+		Komponist []db.Person
+		Text      []db.Person
+		Arrangeur []db.Person
+		Verlag    []db.Verlag
 	}{
 		Lied:      &l,
-		Komponist: &komponist,
-		Text:      &texter,
-		Arrangeur: &arrangeur,
-		Verlag:    &verlag,
+		Komponist: komponist,
+		Text:      texter,
+		Arrangeur: arrangeur,
+		Verlag:    verlag,
 	}
 
 	err := h.render.Render("lied_show", "lied", w, &data)
@@ -221,12 +292,18 @@ func (h *LiedHandler) DeletePOST(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/lied", 300)
 }
 
+// Edit gets all infos of one lied and renders the html page to edit the stuff
 func (h *LiedHandler) Edit(w http.ResponseWriter, id uint) {
 	var l db.Lied
 
 	if err := h.db.First(&l, id).Error; err != nil {
 		log.Printf("/lied/edit: error while getting lied: %v\n", err)
 		return
+	}
+
+	// first try to implement more than one komponist
+	if err := h.db.Model(&l).Related(&l.Komponisten, "person").Error; err != nil {
+		log.Printf("could not find any komponisten: %v\n", err)
 	}
 
 	if l.KomponistID != 0 {

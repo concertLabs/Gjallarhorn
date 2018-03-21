@@ -8,12 +8,8 @@ type Lied struct {
 	Untertitel string
 	Jahr       int
 	// TODO: support more than one komponist
-	Komponist   Person `gorm:"foreignkey:KomponistID"`
-	KomponistID int
-	Texter      Person `gorm:"foreignkey:TexterID"`
-	TexterID    int
-	Arrangeur   Person `gorm:"foreignkey:ArrangeurID"`
-	ArrangeurID int
-	Verlag      Verlag
-	VerlagID    int
+	Komponisten []Person `gorm:"many2many:lied_person;"`
+	Texter      []Person `gorm:"many2many:lied_person;"`
+	Arrangeur   []Person `gorm:"many2many:lied_person;"`
+	Verlag      []Verlag `gorm:"many2many:lied_verlag;"`
 }

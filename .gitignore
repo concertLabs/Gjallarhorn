@@ -23,7 +23,7 @@ _testmain.go
 *.test
 *.prof
 
-config.json
+# config.json
 *.swp
-*.db
+# *.db
 cmd/gjallarhorn/gjallarhorn
